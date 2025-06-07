@@ -8,16 +8,13 @@ import os
 from typing import List, Dict
 from dotenv import load_dotenv
 
-# 載入環境變數
 load_dotenv()
 
 app = FastAPI(title="SITCON CAMP Gemini Chat")
 
-# 配置靜態文件和模板
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# 配置Gemini API
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("請設置 GEMINI_API_KEY 環境變數")
@@ -25,7 +22,7 @@ if not api_key:
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel('gemini-2.0-flash')
 
-# 存儲對話歷史和系統配置
+
 chat_sessions: Dict[str, List[Dict[str, str]]] = {}
 system_configs: Dict[str, Dict] = {}
 
@@ -58,12 +55,10 @@ async def read_root(request: Request):
 @app.post("/chat")
 async def chat_with_gemini(chat_message: ChatMessage):
     try:
-        # 獲取或創建會話
         session_id = chat_message.session_id
         if session_id not in chat_sessions:
             chat_sessions[session_id] = []
             
-        # 獲取系統配置
         config = system_configs.get(session_id, {
             "hostname": "ubuntu",
             "username": "sitcon", 
@@ -72,61 +67,20 @@ async def chat_with_gemini(chat_message: ChatMessage):
             "sudo_enabled": True
         })
         
-        # 添加用戶消息到歷史
         chat_sessions[session_id].append({
             "role": "user",
             "content": chat_message.message
         })
         
-        # 構建對話上下文
         context = ""
-        for msg in chat_sessions[session_id][-10:]:  # 只保留最近10條消息
+        for msg in chat_sessions[session_id][-10:]:
             if msg["role"] == "user":
                 context += f"用戶輸入: {msg['content']}\n"
             else:
                 context += f"終端輸出: {msg['content']}\n"
-          # 構建系統提示
-        system_prompt = f"""你是一個 Ubuntu Linux 終端模擬器。你需要：
-
-1. 完全模擬真實的 Ubuntu 終端行為
-2. 當前用戶配置：
-   - 主機名: {config['hostname']}
-   - 用戶名: {config['username']}
-   - 當前目錄: {config['working_directory']}
-   - sudo 權限: {'已啟用' if config['sudo_enabled'] else '已禁用'}
-   - root 密碼: {'已設置' if config['root_password'] else '未設置'}
-
-3. 模擬規則：
-   - 首先顯示命令提示符和用戶輸入的命令
-   - 然後顯示命令的執行結果
-   - 最後顯示新的命令提示符等待下一個命令
-   - 正確回應 Linux 命令（ls, cd, pwd, cat, sudo 等）
-   - 如果用戶使用 sudo 命令：
-     * 如果已設置root密碼，顯示 "[sudo] password for {config['username']}:" 並等待用戶輸入密碼
-     * 如果用戶輸入的密碼與設置的root密碼匹配，執行sudo命令
-     * 如果密碼錯誤，顯示 "Sorry, try again." 
-     * 如果未設置密碼但sudo_enabled為True，直接執行命令
-   - 模擬文件系統結構和權限
-   - 對無效命令返回適當的錯誤信息
-   - 保持會話狀態（如當前目錄）
-
-4. 重要格式要求：
-   - 直接輸出純文本，不要使用任何markdown語法
-   - 不要使用```text```或```bash```等代碼塊標記
-   - 不要使用**粗體**或*斜體*等markdown格式
-   - 輸出格式應該像這樣：
-     {config['username']}@{config['hostname']}:{config['working_directory']}$ [用戶命令]
-     [命令執行結果]
-     {config['username']}@{config['hostname']}:{config['working_directory']}$
-
-5. 特殊處理：
-   - 如果用戶輸入包含 "config:" 開頭，這是系統配置命令，不要作為終端命令處理
-   - 始終以終端輸出的格式回應，不要額外說明
-
-對話歷史：
-{context}
-
-請處理最新的命令並返回終端輸出："""# 發送消息給Gemini
+        with open("prompt.txt",encoding="utf-8")as f:
+            system_prompt = f.read() + context
+            
         try:
             response = model.generate_content(
                 f"{system_prompt}\n\n用戶命令: {chat_message.message}"
@@ -196,7 +150,4 @@ async def get_system_config(session_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 啟動 SITCON CAMP Gemini Chat Terminal")
-    print("📝 確保已設置 GEMINI_API_KEY 環境變數")
-    print("🌐 瀏覽器打開: http://localhost:8000")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, port=8000)
