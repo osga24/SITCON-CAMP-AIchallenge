@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITCON CAMP</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <span class="button red"></span>
+                <span class="button yellow"></span>
+                <span class="button green"></span>
+            </div>
+            <div class="terminal-title">SITCON CAMP</div>
+        </div>
+        
+        <div class="terminal-body">
+            <div id="terminal-output">
+                <div class="welcome-message">
+                    <pre class="ascii-art">
+  _____ _____ _______ _____ ____  _   _    _____          __  __ _____  
+ / ____|_   _|__   __|/ ____/ __ \| \ | |  / ____|   /\   |  \/  |  __ \ 
+| (___   | |    | |  | |   | |  | |  \| | | |       /  \  | \  / | |__) |
+ \___ \  | |    | |  | |   | |  | | . ` | | |      / /\ \ | |\/| |  ___/ 
+ ____) |_| |_   | |  | |___| |__| | |\  | | |____ / ____ \| |  | | |     
+|_____/|_____|  |_|   \_____\____/|_| \_|  \_____/_/    \_\_|  |_|_|     
+                    </pre>                    <p class="system-info">Ubuntu 22.04 LTS - Terminal Simulator ready.</p>
+                    <p class="help-text">Type 'help' for available commands or start using Linux commands!</p>
+                </div>
+            </div>
+              <div class="input-line">
+                <input type="text" id="command-input" autocomplete="off">
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

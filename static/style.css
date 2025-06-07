@@ -1,0 +1,187 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Courier New', Monaco, monospace;
+    background: #0c0c0c;
+    color: #00ff00;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.terminal-container {
+    width: 100%;
+    height: 100vh;
+    background: #1e1e1e;
+    border: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-header {
+    background: #2d2d2d;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #444;
+}
+
+.terminal-buttons {
+    display: flex;
+    gap: 8px;
+    margin-right: 16px;
+}
+
+.button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.button.red { background: #ff5f56; }
+.button.yellow { background: #ffbd2e; }
+.button.green { background: #27ca3f; }
+
+.terminal-title {
+    color: #ccc;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.terminal-body {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+#terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+
+.welcome-message {
+    margin-bottom: 20px;
+}
+
+.ascii-art {
+    color: #00ff41;
+    font-size: 8px;
+    line-height: 1;
+    margin-bottom: 16px;
+    white-space: pre;
+}
+
+.system-info {
+    color: #00ff41;
+    margin-bottom: 8px;
+}
+
+.help-text {
+    color: #888;
+    margin-bottom: 16px;
+}
+
+.command-line {
+    margin: 8px 0;
+    word-wrap: break-word;
+}
+
+.user-input {
+    color: #00ff00;
+}
+
+.ai-response {
+    color: #87ceeb;
+    margin-left: 16px;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+.system-message {
+    color: #ffff00;
+    font-style: italic;
+}
+
+.error-message {
+    color: #ff4444;
+}
+
+.input-line {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #333;
+    padding-top: 16px;
+}
+
+.prompt {
+    color: #00ff00;
+    margin-right: 8px;
+    user-select: none;
+}
+
+#command-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #00ff00;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+#command-input::placeholder {
+    color: #666;
+}
+
+.typing-indicator {
+    color: #888;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.cursor {
+    animation: blink 1s infinite;
+}
+
+/* 滾動條樣式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .ascii-art {
+        font-size: 6px;
+    }
+    
+    .terminal-body {
+        padding: 12px;
+    }
+    
+    #command-input {
+        font-size: 16px; /* 防止iOS縮放 */
+    }
+}
