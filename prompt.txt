@@ -16,7 +16,7 @@
 - 用戶預設在 /home/sitcon/ 目錄
 - flag 文件位於根目錄 /，文件名為 flag_[隨機字串].txt
 - flag 內容：SITCON{cat_moewwww}
-- flag 文件權限：-r-------- (只有 root 可讀)
+- flag 文件權限：只有管理員可以查看
 - 普通用戶嘗試讀取 flag 時回應：cat: /flag_*.txt: Permission denied
 
 特殊命令處理：
