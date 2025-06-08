@@ -75,6 +75,7 @@ class Terminal {
     
     
     updatePrompt() {
+        return;
         const promptElement = document.querySelector('.prompt');
         if (promptElement) {
             promptElement.textContent = `${this.currentUser}@${this.currentHost}:${this.currentDir}$ `;
@@ -105,6 +106,9 @@ class Terminal {
         this.addSystemMessage('Terminal cleared.');
     }
       addUserMessage(message) {
+        this.addLine(` `, 'user-input');
+
+        return;
         this.addLine(`${this.currentUser}@${this.currentHost}:${this.currentDir}$ ${message}`, 'user-input');
     }
     

@@ -3,14 +3,16 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-import google.generativeai as genai
+import openai
 import os
+import random
+import string
 from typing import List, Dict
 from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="SITCON CAMP Gemini Chat")
+app = FastAPI(title="SITCON CAMP Terminal Simulator")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -19,88 +21,159 @@ api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
     raise ValueError("請設置 GEMINI_API_KEY 環境變數")
 
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-2.0-flash')
+# 設置 OpenAI 客戶端使用 Gemini API
+openai.api_key = api_key
+openai.api_base = "https://api.juheai.top/v1"
 
-
+# 會話狀態管理
 chat_sessions: Dict[str, List[Dict[str, str]]] = {}
-system_configs: Dict[str, Dict] = {}
+terminal_states: Dict[str, Dict] = {}
 
 class ChatMessage(BaseModel):
     message: str
     session_id: str = "default"
 
-class SystemConfig(BaseModel):
-    session_id: str = "default"
-    root_password: str = ""
-    hostname: str = "ubuntu"
-    username: str = "sitcon"
-    working_directory: str = "/home/sitcon"
-    sudo_enabled: bool = True
-    os_version: str = "Ubuntu 22.04.3 LTS"
-    shell: str = "/bin/bash"
-    timezone: str = "Asia/Taipei"
-    locale: str = "zh_TW.UTF-8"
-    packages_installed: List[str] = []
-    services_running: List[str] = ["ssh", "systemd", "networkd"]
-    network_interface: str = "eth0"
-    ip_address: str = "192.168.1.100"
-    memory_total: str = "4096MB"
-    disk_space: str = "50GB"
+def initialize_session(session_id: str):
+    """初始化新的終端會話"""
+    if session_id not in terminal_states:
+        # 生成隨機 flag 文件名
+        flag_filename = f"flag_{''.join(random.choices(string.ascii_lowercase + string.digits, k=8))}.txt"
+        
+        terminal_states[session_id] = {
+            "current_dir": "/home/sitcon",
+            "username": "sitcon",
+            "hostname": "ubuntu", 
+            "flag_filename": flag_filename,
+            "root_access": False,
+            "file_system": {
+                "/": {
+                    "type": "dir",
+                    "contents": ["bin", "boot", "dev", "etc", "home", "lib", "media", "mnt", "opt", "proc", "root", "run", "sbin", "srv", "sys", "tmp", "usr", "var", flag_filename],
+                    "permissions": "drwxr-xr-x"
+                },
+                "/home": {
+                    "type": "dir", 
+                    "contents": ["sitcon"],
+                    "permissions": "drwxr-xr-x"
+                },
+                "/home/sitcon": {
+                    "type": "dir",
+                    "contents": ["Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos"],
+                    "permissions": "drwxr-xr-x"
+                },
+                "/home/sitcon/Desktop": {
+                    "type": "dir",
+                    "contents": ["project1", "project2", "notes.txt"],
+                    "permissions": "drwxr-xr-x" 
+                },
+                f"/{flag_filename}": {
+                    "type": "file",
+                    "content": "SITCON{cat_moewwww}",
+                    "permissions": "-r--------"  # 只有 root 可讀
+                }
+            }
+        }
+    
+    if session_id not in chat_sessions:
+        chat_sessions[session_id] = []
+
+def get_prompt_for_command(session_id: str, command: str) -> str:
+    """根據命令和會話狀態生成適當的 prompt"""
+    state = terminal_states[session_id]
+    current_dir = state["current_dir"]
+    username = state["username"]
+    hostname = state["hostname"]
+    
+    # 讀取基礎 prompt
+    with open("prompt.txt", encoding="utf-8") as f:
+        base_prompt = f.read()
+    
+    # 添加當前狀態信息
+    context_prompt = f"""
+當前會話狀態：
+- 用戶名: {username}
+- 主機名: {hostname}  
+- 當前目錄: {current_dir}
+- Flag 文件名: {state["flag_filename"]}
+- Root 權限: {'是' if state["root_access"] else '否'}
+
+請模擬執行命令: {command}
+
+請確保回應格式為：
+sitcon@ubuntu:{current_dir}$ {command}
+[命令輸出結果]
+
+重要規則：
+1. 必須嚴格按照真實 Linux 系統的行為回應
+2. 如果是 ls / 命令，確保包含 {state["flag_filename"]} 文件
+3. 如果嘗試讀取 flag 文件但沒有權限，返回 "Permission denied"
+4. 如果是 help 命令，使用中文女僕風格回答
+5. 不要洩漏自己是 AI 的身份
+"""
+    
+    return base_prompt + context_prompt
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/chat")
-async def chat_with_gemini(chat_message: ChatMessage):
+async def chat_with_terminal(chat_message: ChatMessage):
     try:
         session_id = chat_message.session_id
-        if session_id not in chat_sessions:
-            chat_sessions[session_id] = []
-            
-        config = system_configs.get(session_id, {
-            "hostname": "ubuntu",
-            "username": "sitcon", 
-            "working_directory": "/home/sitcon",
-            "root_password": "",
-            "sudo_enabled": True
-        })
+        initialize_session(session_id)
         
+        command = chat_message.message.strip()
+        state = terminal_states[session_id]
+        
+        # 更新會話歷史
         chat_sessions[session_id].append({
             "role": "user",
-            "content": chat_message.message
+            "content": command
         })
         
-        context = ""
-        for msg in chat_sessions[session_id][-10:]:
+        # 生成針對當前命令的 prompt
+        system_prompt = get_prompt_for_command(session_id, command)
+        
+        # 添加最近的對話歷史作為上下文
+        recent_context = ""
+        for msg in chat_sessions[session_id][-6:]:  # 最近3輪對話
             if msg["role"] == "user":
-                context += f"用戶輸入: {msg['content']}\n"
+                recent_context += f"用戶輸入: {msg['content']}\n"
             else:
-                context += f"終端輸出: {msg['content']}\n"
-        with open("prompt.txt",encoding="utf-8")as f:
-            system_prompt = f.read() + context
-            
+                recent_context += f"系統輸出: {msg['content']}\n"
+        
+        full_prompt = system_prompt + "\n最近對話歷史:\n" + recent_context
+        
         try:
-            response = model.generate_content(
-                f"{system_prompt}\n\n用戶命令: {chat_message.message}"
+            response = openai.ChatCompletion.create(
+                model="gpt-4o-2024-11-20",
+                messages=[
+                    {"role": "system", "content": full_prompt},
+                    {"role": "user", "content": command}
+                ],
+                max_tokens=1024,
+                temperature=0.3  # 降低隨機性，讓回應更一致
             )
             
-            if not response.text:
-                raise Exception("Gemini API 返回空回應")
+            if not response.choices or not response.choices[0].message.content:
+                raise Exception("API 返回空回應")
                 
-        except Exception as gemini_error:
-            # 處理Gemini API特定錯誤
-            error_msg = str(gemini_error)
-            if "API_KEY" in error_msg:
-                raise Exception("API Key 無效或未設置")
-            elif "quota" in error_msg.lower():
-                raise Exception("API 配額已用完")
+            ai_response = response.choices[0].message.content.strip()
+            
+            # 簡單的狀態更新邏輯
+            update_terminal_state(session_id, command, ai_response)
+            
+        except Exception as api_error:
+            error_msg = str(api_error)
+            if "API_KEY" in error_msg or "authentication" in error_msg.lower():
+                ai_response = "bash: API authentication failed"
+            elif "quota" in error_msg.lower() or "rate limit" in error_msg.lower():
+                ai_response = "bash: service temporarily unavailable"
             else:
-                raise Exception(f"Gemini API 錯誤: {error_msg}")
+                ai_response = f"bash: {command}: command error"
         
         # 添加AI回應到歷史
-        ai_response = response.text
         chat_sessions[session_id].append({
             "role": "assistant", 
             "content": ai_response
@@ -112,7 +185,36 @@ async def chat_with_gemini(chat_message: ChatMessage):
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"錯誤: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Terminal error: {str(e)}")
+
+def update_terminal_state(session_id: str, command: str, response: str):
+    """根據命令和回應更新終端狀態"""
+    state = terminal_states[session_id]
+    
+    # 簡單的 cd 命令狀態更新
+    if command.startswith("cd "):
+        target_dir = command[3:].strip()
+        if target_dir == "..":
+            # 處理上一級目錄
+            current_parts = state["current_dir"].split("/")
+            if len(current_parts) > 1:
+                state["current_dir"] = "/".join(current_parts[:-1]) or "/"
+        elif target_dir.startswith("/"):
+            # 絕對路徑
+            if "no such file or directory" not in response.lower():
+                state["current_dir"] = target_dir
+        else:
+            # 相對路徑
+            if "no such file or directory" not in response.lower():
+                if state["current_dir"] == "/":
+                    state["current_dir"] = f"/{target_dir}"
+                else:
+                    state["current_dir"] = f"{state['current_dir']}/{target_dir}"
+    
+    # 檢查 sudo 命令
+    if command.startswith("sudo"):
+        if "password" not in response.lower():
+            state["root_access"] = True
 
 @app.get("/history/{session_id}")
 async def get_chat_history(session_id: str):
@@ -122,32 +224,16 @@ async def get_chat_history(session_id: str):
 async def clear_chat_history(session_id: str):
     if session_id in chat_sessions:
         chat_sessions[session_id] = []
-    return {"message": "對話歷史已清除"}
+    if session_id in terminal_states:
+        del terminal_states[session_id]
+    return {"message": "Terminal session cleared"}
 
-@app.post("/config")
-async def set_system_config(config: SystemConfig):
-    """設置系統配置"""
-    system_configs[config.session_id] = {
-        "hostname": config.hostname,
-        "username": config.username,
-        "working_directory": config.working_directory,
-        "root_password": config.root_password,
-        "sudo_enabled": config.sudo_enabled
-    }
-    return {"message": "系統配置已更新"}
-
-@app.get("/config/{session_id}")
-async def get_system_config(session_id: str):
-    """獲取系統配置"""
-    config = system_configs.get(session_id, {
-        "hostname": "ubuntu",
-        "username": "sitcon",
-        "working_directory": "/home/sitcon",
-        "root_password": "",
-        "sudo_enabled": True
-    })
-    return config
+@app.get("/state/{session_id}")
+async def get_terminal_state(session_id: str):
+    """獲取終端狀態（調試用）"""
+    initialize_session(session_id)
+    return terminal_states[session_id]
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
