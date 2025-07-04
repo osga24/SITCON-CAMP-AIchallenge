@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-import openai
+from openai import OpenAI
 import os
 import random
 import string
@@ -17,13 +17,15 @@ app = FastAPI(title="SITCON CAMP Terminal Simulator")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("API_KEY")
 if not api_key:
-    raise ValueError("請設置 GEMINI_API_KEY 環境變數")
+    raise ValueError("請設置 API_KEY 環境變數")
 
-# 設置 OpenAI 客戶端使用 Gemini API
-openai.api_key = api_key
-openai.api_base = "https://api.juheai.top/v1"
+# 設置 OpenAI 客戶端使用第三方 API
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://api.juheai.top/v1"
+)
 
 # 會話狀態管理
 chat_sessions: Dict[str, List[Dict[str, str]]] = {}
@@ -146,7 +148,7 @@ async def chat_with_terminal(chat_message: ChatMessage):
         full_prompt = system_prompt + "\n最近對話歷史:\n" + recent_context
         
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model="gpt-4o-2024-11-20",
                 messages=[
                     {"role": "system", "content": full_prompt},
