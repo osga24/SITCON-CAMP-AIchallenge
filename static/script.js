@@ -18,10 +18,10 @@ class Terminal {
         this.handleCommand();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        this.navigateHistory(-1);
+        this.navigateHistory(1);
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        this.navigateHistory(1);
+        this.navigateHistory(-1);
       }
     });
 
@@ -83,7 +83,7 @@ class Terminal {
       },
       body: JSON.stringify({
         message: message,
-        session_id: this.sessionId,
+        history: this.commandHistory.toString(),
       }),
     });
 

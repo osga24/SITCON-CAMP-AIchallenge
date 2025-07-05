@@ -5,8 +5,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import openai
 import os
-import random
-import string
+import json
 from typing import List, Dict
 from dotenv import load_dotenv
 
@@ -30,6 +29,7 @@ terminal_states: Dict[str, Dict] = {}
 
 class ChatMessage(BaseModel):
     message: str
+    history: str
 
 def get_prompt_for_command() -> str:
     
@@ -48,33 +48,20 @@ async def chat_with_terminal(chat_message: ChatMessage):
     try:
         
         command = chat_message.message.strip()
+        history = chat_message.history.strip()
         
         # 生成針對當前命令的 prompt
         system_prompt = get_prompt_for_command()
         
-        # 添加最近的對話歷史作為上下文
-        # recent_context = ""
-        # for msg in chat_sessions[session_id][-6:]:  # 最近3輪對話
-        #     if msg["role"] == "user":
-        #         recent_context += f"用戶輸入: {msg['content']}\n"
-        #     else:
-        #         recent_context += f"系統輸出: {msg['content']}\n"
-        
-        # full_prompt = system_prompt + "\n最近對話歷史:\n" + recent_context
-        
-        history = []
+        full_prompt = [{"role": "system", "content": system_prompt + "\n\n用戶歷史指令紀錄：" + history},{"role": "user", "content": command}]
         
         try:
             response = openai.ChatCompletion.create(
                 model="basic/gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": command}
-                ],
+                messages=full_prompt,
                 max_tokens=1024,
                 temperature=0.3  # 降低隨機性，讓回應更一致
             )
-            history += [{"role": "system", "content": system_prompt},{"role": "user", "content": command}]
             
             if not response.choices or not response.choices[0].message.content:
                 raise Exception("API 返回空回應")
@@ -90,7 +77,8 @@ async def chat_with_terminal(chat_message: ChatMessage):
             #     ai_response = "bash: service temporarily unavailable"
             # else:
             #     ai_response = f"bash: {command}: command error"
-        
+                
+            
         return {
             "response": ai_response,
             "status": "success"
