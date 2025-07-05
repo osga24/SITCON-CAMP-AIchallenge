@@ -3,7 +3,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from openai import OpenAI
+import openai
 import os
 import random
 import string
@@ -21,11 +21,8 @@ api_key = os.getenv("API_KEY")
 if not api_key:
     raise ValueError("請設置 API_KEY 環境變數")
 
-# 設置 OpenAI 客戶端使用第三方 API
-client = OpenAI(
-    api_key=api_key,
-    base_url="https://api.juheai.top/v1"
-)
+openai.api_key = api_key
+openai.api_base = "https://api.juheai.top/v1"
 
 # 會話狀態管理
 chat_sessions: Dict[str, List[Dict[str, str]]] = {}
@@ -91,29 +88,8 @@ def get_prompt_for_command(session_id: str, command: str) -> str:
         base_prompt = f.read()
     
     # 添加當前狀態信息
-    context_prompt = f"""
-當前會話狀態：
-- 用戶名: {username}
-- 主機名: {hostname}  
-- 當前目錄: {current_dir}
-- Flag 文件名: {state["flag_filename"]}
-- Root 權限: {'是' if state["root_access"] else '否'}
-
-請模擬執行命令: {command}
-
-請確保回應格式為：
-sitcon@ubuntu:{current_dir}$ {command}
-[命令輸出結果]
-
-重要規則：
-1. 必須嚴格按照真實 Linux 系統的行為回應
-2. 如果是 ls / 命令，確保包含 {state["flag_filename"]} 文件
-3. 如果嘗試讀取 flag 文件但沒有權限，返回 "Permission denied"
-4. 如果是 help 命令，使用中文女僕風格回答
-5. 不要洩漏自己是 AI 的身份
-"""
     
-    return base_prompt + context_prompt
+    return base_prompt 
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -148,8 +124,8 @@ async def chat_with_terminal(chat_message: ChatMessage):
         full_prompt = system_prompt + "\n最近對話歷史:\n" + recent_context
         
         try:
-            response = client.chat.completions.create(
-                model="gpt-4o-2024-11-20",
+            response = openai.ChatCompletion.create(
+                model="basic/gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": full_prompt},
                     {"role": "user", "content": command}
