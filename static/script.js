@@ -5,15 +5,11 @@ class Terminal {
     this.sessionId = "session_" + Date.now();
     this.commandHistory = [];
     this.historyIndex = -1;
-    this.currentUser = "sitcon";
-    this.currentHost = "ubuntu";
-    this.currentDir = "/home/sitcon";
 
     this.setupEventListeners();
     this.addSystemMessage(
       'Ubuntu Terminal Simulator ready. Type "help" for available commands.'
     );
-    this.updatePrompt();
   }
 
   setupEventListeners() {
@@ -63,7 +59,7 @@ class Terminal {
     this.historyIndex = -1;
 
     // 顯示用戶輸入
-    this.addUserMessage(command);
+    // this.addUserMessage(command);
     this.input.value = "";
 
     // 顯示加載指示器
@@ -76,14 +72,6 @@ class Terminal {
     } catch (error) {
       this.hideTypingIndicator();
       this.addErrorMessage(`錯誤: ${error.message}`);
-    }
-  }
-
-  updatePrompt() {
-    return;
-    const promptElement = document.querySelector(".prompt");
-    if (promptElement) {
-      promptElement.textContent = `${this.currentUser}@${this.currentHost}:${this.currentDir}$ `;
     }
   }
 
@@ -110,12 +98,12 @@ class Terminal {
     this.output.innerHTML = "";
     this.addSystemMessage("Terminal cleared.");
   }
-  addUserMessage(message) {
-    this.addLine(
-      `${this.currentUser}@${this.currentHost}:${this.currentDir}$ ${message}`,
-      "user-input"
-    );
-  }
+  // addUserMessage(message) {
+  //   this.addLine(
+  //     `${this.currentUser}@${this.currentHost}:${this.currentDir}$ ${message}`,
+  //     "user-input"
+  //   );
+  // }
 
   addAIResponse(response) {
     this.addLine(response, "ai-response");
