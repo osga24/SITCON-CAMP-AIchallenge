@@ -4,12 +4,29 @@ class Terminal {
     this.input = document.getElementById("command-input");
     this.commandHistory = [];
     this.historyIndex = -1;
+    this.sessionId = this.getOrCreateSessionId();
 
     this.setupEventListeners();
     this.addSystemMessage(
       'Ubuntu Terminal Simulator ready. Type "help" for available commands.'
     );
   }
+
+  getOrCreateSessionId() {
+    // 每次都生成新的 session ID
+    return this.generateUUID();
+  }
+
+  generateUUID() {
+    // 簡單的 UUID v4 生成器
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+
 
   setupEventListeners() {
     this.input.addEventListener("keydown", (e) => {
@@ -53,6 +70,12 @@ class Terminal {
     const command = this.input.value.trim();
     if (!command) return;
 
+    // 處理本地命令
+    if (command === "clear") {
+      this.clearTerminal();
+      return;
+    }
+
     // 添加到歷史
     this.commandHistory.push(command);
     this.historyIndex = -1;
@@ -78,7 +101,8 @@ class Terminal {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: message
+        message: message,
+        session_id: this.sessionId
       }),
     });
 

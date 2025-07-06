@@ -22,17 +22,27 @@ if not api_key:
 openai.api_key = api_key
 openai.api_base = "https://api.juheai.top/v1"
 
-chat_history: List[Dict[str, str]] = []
+session_histories: Dict[str, List[Dict[str, str]]] = {}
 
 class ChatMessage(BaseModel):
     message: str
+    session_id: str
 
 def get_prompt_for_command() -> str:
     # 讀取基礎 prompt
-    with open("prompt.txt", encoding="utf-8") as f:
+    with open("prompts/basic_prompt.txt", encoding="utf-8") as f:
         base_prompt = f.read()
     
     return base_prompt 
+
+def get_session_history(session_id: str) -> List[Dict[str, str]]:
+    """獲取指定 session 的對話歷史，如果不存在則創建新的"""
+    if session_id not in session_histories:
+        session_histories[session_id] = []
+    
+    return session_histories[session_id]
+
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -41,9 +51,14 @@ async def read_root(request: Request):
 @app.post("/chat")
 async def chat_with_terminal(chat_message: ChatMessage):
     try:
-        global chat_history
-        
         command = chat_message.message.strip()
+        session_id = chat_message.session_id.strip()
+        
+        if not session_id:
+            raise HTTPException(status_code=400, detail="Session ID 不能為空")
+        
+        # 獲取該 session 的對話歷史
+        chat_history = get_session_history(session_id)
         
         # 生成針對當前命令的 prompt
         system_prompt = get_prompt_for_command()
@@ -70,13 +85,13 @@ async def chat_with_terminal(chat_message: ChatMessage):
                 
             ai_response = response.choices[0].message.content.strip()
             
-            # 儲存對話到歷史
+            # 儲存對話到該 session 的歷史
             chat_history.append({"role": "user", "content": command})
             chat_history.append({"role": "assistant", "content": ai_response})
             
             # 限制歷史長度避免 token 過多
             if len(chat_history) > 40:  # 保持最近 40 條訊息 (20 組對話)
-                chat_history = chat_history[-40:]
+                chat_history[:] = chat_history[-40:]
             
         except Exception as api_error:
             error_msg = str(api_error)
@@ -84,7 +99,8 @@ async def chat_with_terminal(chat_message: ChatMessage):
                 
         return {
             "response": ai_response,
-            "status": "success"
+            "status": "success",
+            "session_id": session_id
         }
         
     except Exception as e:
@@ -94,10 +110,9 @@ async def chat_with_terminal(chat_message: ChatMessage):
 async def debug_state():
     """調試用：查看當前狀態"""
     return {
-        "chat_history": chat_history,
-        "message_count": len(chat_history),
-        "state_tracking": "Pure AI self-managed"
+        "total_sessions": len(session_histories)
     }
+
 
 if __name__ == "__main__":
     import uvicorn
