@@ -2,7 +2,6 @@ class Terminal {
   constructor() {
     this.output = document.getElementById("terminal-output");
     this.input = document.getElementById("command-input");
-    this.sessionId = "session_" + Date.now();
     this.commandHistory = [];
     this.historyIndex = -1;
 
@@ -57,9 +56,6 @@ class Terminal {
     // 添加到歷史
     this.commandHistory.push(command);
     this.historyIndex = -1;
-
-    // 顯示用戶輸入
-    // this.addUserMessage(command);
     this.input.value = "";
 
     // 顯示加載指示器
@@ -82,8 +78,7 @@ class Terminal {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: message,
-        history: this.commandHistory.toString(),
+        message: message
       }),
     });
 
@@ -96,14 +91,9 @@ class Terminal {
 
   clearTerminal() {
     this.output.innerHTML = "";
+    this.commandHistory = []; // 清空指令歷史
     this.addSystemMessage("Terminal cleared.");
   }
-  // addUserMessage(message) {
-  //   this.addLine(
-  //     `${this.currentUser}@${this.currentHost}:${this.currentDir}$ ${message}`,
-  //     "user-input"
-  //   );
-  // }
 
   addAIResponse(response) {
     this.addLine(response, "ai-response");

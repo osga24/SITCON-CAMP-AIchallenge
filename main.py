@@ -5,7 +5,6 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import openai
 import os
-import json
 from typing import List, Dict
 from dotenv import load_dotenv
 
@@ -23,16 +22,12 @@ if not api_key:
 openai.api_key = api_key
 openai.api_base = "https://api.juheai.top/v1"
 
-# 會話狀態管理
-chat_sessions: Dict[str, List[Dict[str, str]]] = {}
-terminal_states: Dict[str, Dict] = {}
+chat_history: List[Dict[str, str]] = []
 
 class ChatMessage(BaseModel):
     message: str
-    history: str
 
 def get_prompt_for_command() -> str:
-    
     # 讀取基礎 prompt
     with open("prompt.txt", encoding="utf-8") as f:
         base_prompt = f.read()
@@ -46,21 +41,28 @@ async def read_root(request: Request):
 @app.post("/chat")
 async def chat_with_terminal(chat_message: ChatMessage):
     try:
+        global chat_history
         
         command = chat_message.message.strip()
-        history = chat_message.history.strip()
         
         # 生成針對當前命令的 prompt
         system_prompt = get_prompt_for_command()
         
-        full_prompt = [{"role": "system", "content": system_prompt + "\n\n用戶歷史指令紀錄：" + history},{"role": "user", "content": command}]
+        # 建構對話歷史
+        messages = [{"role": "system", "content": system_prompt}]
+        
+        # 添加歷史對話
+        messages.extend(chat_history)
+        
+        # 添加當前指令
+        messages.append({"role": "user", "content": command})
         
         try:
             response = openai.ChatCompletion.create(
                 model="basic/gpt-4o-mini",
-                messages=full_prompt,
+                messages=messages,
                 max_tokens=1024,
-                temperature=0.3  # 降低隨機性，讓回應更一致
+                temperature=0.3
             )
             
             if not response.choices or not response.choices[0].message.content:
@@ -68,17 +70,18 @@ async def chat_with_terminal(chat_message: ChatMessage):
                 
             ai_response = response.choices[0].message.content.strip()
             
+            # 儲存對話到歷史
+            chat_history.append({"role": "user", "content": command})
+            chat_history.append({"role": "assistant", "content": ai_response})
+            
+            # 限制歷史長度避免 token 過多
+            if len(chat_history) > 40:  # 保持最近 40 條訊息 (20 組對話)
+                chat_history = chat_history[-40:]
+            
         except Exception as api_error:
             error_msg = str(api_error)
             ai_response = error_msg
-            # if "API_KEY" in error_msg or "authentication" in error_msg.lower():
-            #     ai_response = "bash: API authentication failed"
-            # elif "quota" in error_msg.lower() or "rate limit" in error_msg.lower():
-            #     ai_response = "bash: service temporarily unavailable"
-            # else:
-            #     ai_response = f"bash: {command}: command error"
                 
-            
         return {
             "response": ai_response,
             "status": "success"
@@ -86,6 +89,15 @@ async def chat_with_terminal(chat_message: ChatMessage):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Terminal error: {str(e)}")
+
+@app.get("/debug/state")
+async def debug_state():
+    """調試用：查看當前狀態"""
+    return {
+        "chat_history": chat_history,
+        "message_count": len(chat_history),
+        "state_tracking": "Pure AI self-managed"
+    }
 
 if __name__ == "__main__":
     import uvicorn
