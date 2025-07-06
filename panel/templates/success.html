@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>恭喜破關！</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #33ff33;
+            font-family: monospace;
+            font-size: 1.3em;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #33ff33;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { background: #33ff33; }
+            50% { background: transparent; }
+            100% { background: #33ff33; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🎉 小隊 {{ team }} 已完成所有挑戰！ <span class="cursor"></span></h2>
+    </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CTF 登入</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #33ff33;
+            font-family: monospace;
+            font-size: 1.1em;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #33ff33;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        input, button {
+            background: #000;
+            color: #33ff33;
+            border: 1px solid #33ff33;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 1em;
+        }
+        button:hover {
+            background: #33ff33;
+            color: #000;
+            cursor: pointer;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { background: #33ff33; }
+            50% { background: transparent; }
+            100% { background: #33ff33; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>請輸入小隊編號 <span class="cursor"></span></h2>
+        <form method="post" action="/set_team">
+            <input type="number" name="team" min="1" max="9" required>
+            <button type="submit">進入</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+[project]
+name = "ctf-project"
+version = "0.1.0"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "jinja2",
+    "itsdangerous"
+]
+requires-python = ">=3.8"

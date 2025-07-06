@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ info.title }}</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            border: 1px solid #00ff00;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #00ff00;
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        .error {
+            color: #ff3333;
+            margin-bottom: 1em;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            background: #111;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            font-size: 1em;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #55ff55;
+        }
+        .footer {
+            margin-top: 2em;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0% { background: #00ff00; }
+            50% { background: transparent; }
+            100% { background: #00ff00; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ info.title }} <span class="cursor"></span></h2>
+        <p>{{ info.description }}</p>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="post" action="/submit/{{ level }}">
+            <input type="text" name="flag" placeholder="輸入 Flag" required>
+            <button type="submit">提交</button>
+        </form>
+    </div>
+</body>
+</html>
