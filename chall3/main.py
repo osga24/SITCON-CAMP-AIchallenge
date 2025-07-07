@@ -31,7 +31,7 @@ openai.api_base = "https://api.juheai.top/v1"
 
 # MongoDB 連接
 try:
-    mongo_client = MongoClient(mongodb_url)
+    mongo_client = MongoClient(mongodb_url, tlsAllowInvalidCertificates=True)
     db = mongo_client.sitcon_camp
     chall3_collection = db.chall3
     print("MongoDB 連接成功")

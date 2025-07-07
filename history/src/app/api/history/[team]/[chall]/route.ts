@@ -27,7 +27,9 @@ export async function GET(
         }
 
         // 連接 MongoDB
-        const client = new MongoClient(mongodb_url)
+        const client = new MongoClient(mongodb_url, {
+            tlsAllowInvalidCertificates: true
+        })
         await client.connect()
 
         const db = client.db('sitcon_camp')
