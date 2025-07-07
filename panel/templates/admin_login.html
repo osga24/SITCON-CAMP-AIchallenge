@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CTF Terminal Access</title>
+    <title>管理員登入 - CTF Admin</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap');
         
         body {
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: #00ff41;
+            color: #ff6b6b;
             font-family: 'Source Code Pro', monospace;
             font-size: 1.1em;
             padding: 0;
@@ -30,14 +30,14 @@
         }
         
         .terminal {
-            width: 800px;
+            width: 600px;
             max-width: 90vw;
             background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #00ff41;
+            border: 2px solid #ff6b6b;
             border-radius: 12px;
             box-shadow: 
-                0 0 20px #00ff41,
-                inset 0 0 20px rgba(0, 255, 65, 0.1);
+                0 0 20px #ff6b6b,
+                inset 0 0 20px rgba(255, 107, 107, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -54,14 +54,14 @@
                     0deg,
                     transparent,
                     transparent 2px,
-                    rgba(0, 255, 65, 0.03) 2px,
-                    rgba(0, 255, 65, 0.03) 4px
+                    rgba(255, 107, 107, 0.03) 2px,
+                    rgba(255, 107, 107, 0.03) 4px
                 );
             pointer-events: none;
         }
         
         .terminal-header {
-            background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
+            background: linear-gradient(90deg, #ff6b6b 0%, #ff8e8e 100%);
             color: #000;
             padding: 12px 20px;
             font-weight: 600;
@@ -91,86 +91,156 @@
             position: relative;
         }
         
-        .ascii-art {
-            color: #00ff41;
-            font-size: 0.8em;
-            margin-bottom: 20px;
+        .admin-header {
             text-align: center;
-            text-shadow: 0 0 10px #00ff41;
-        }
-        
-        .prompt-line {
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            text-shadow: 0 0 10px #00ff41;
-        }
-        
-        .prompt-symbol {
+            margin-bottom: 30px;
             color: #ff6b6b;
+        }
+        
+        .admin-title {
+            font-size: 2.2em;
             font-weight: 700;
+            text-shadow: 0 0 20px #ff6b6b;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .admin-subtitle {
+            font-size: 1.1em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+        
+        .login-section {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .login-section::before {
+            content: "RESTRICTED ACCESS";
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: #000;
+            color: #ff6b6b;
+            padding: 0 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .error-message {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid #ff6b6b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+            font-weight: 600;
+            text-align: center;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
         
         .input-group {
             display: flex;
             gap: 15px;
-            margin-top: 20px;
             align-items: center;
+            margin-bottom: 20px;
         }
         
         .input-prefix {
-            color: #00ff41;
+            color: #ff6b6b;
             font-weight: 600;
+            font-size: 1.1em;
+            min-width: 120px;
         }
         
-        input[type="number"] {
+        input[type="password"] {
+            flex: 1;
             background: transparent;
             border: none;
-            border-bottom: 2px solid #00ff41;
-            color: #00ff41;
+            border-bottom: 2px solid #ff6b6b;
+            color: #ff6b6b;
             font-family: 'Source Code Pro', monospace;
-            font-size: 1.2em;
-            padding: 8px;
-            width: 100px;
-            text-align: center;
+            font-size: 1.1em;
+            padding: 12px;
             outline: none;
             transition: all 0.3s ease;
         }
         
-        input[type="number"]:focus {
-            border-bottom-color: #ff6b6b;
-            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        input[type="password"]:focus {
+            border-bottom-color: #00ff41;
+            box-shadow: 0 2px 15px rgba(0, 255, 65, 0.3);
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
         }
         
         .submit-btn {
-            background: linear-gradient(45deg, #00ff41, #00cc33);
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
             color: #000;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 30px;
             font-family: 'Source Code Pro', monospace;
-            font-size: 1em;
+            font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
             border-radius: 6px;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
         }
         
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 255, 65, 0.4);
-            background: linear-gradient(45deg, #00cc33, #00ff41);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(45deg, #ff8e8e, #ff6b6b);
         }
         
         .submit-btn:active {
             transform: translateY(0);
         }
         
+        .warning-text {
+            color: #ffbf00;
+            font-size: 0.9em;
+            text-align: center;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+        
         .cursor {
             display: inline-block;
             width: 2px;
             height: 1.2em;
-            background: #00ff41;
+            background: #ff6b6b;
             animation: blink 1s infinite;
             margin-left: 2px;
         }
@@ -180,38 +250,13 @@
             51%, 100% { opacity: 0; }
         }
         
-        .warning-text {
-            color: #ff6b6b;
-            font-size: 0.9em;
-            margin-top: 15px;
-            text-align: center;
-            opacity: 0.8;
-        }
-        
-        .glitch {
-            animation: glitch 2s infinite;
-        }
-        
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-1px, 1px); }
-            20% { transform: translate(1px, -1px); }
-            30% { transform: translate(-1px, -1px); }
-            40% { transform: translate(1px, 1px); }
-            50% { transform: translate(-1px, 1px); }
-            60% { transform: translate(1px, -1px); }
-            70% { transform: translate(-1px, -1px); }
-            80% { transform: translate(1px, 1px); }
-            90% { transform: translate(-1px, 1px); }
-        }
-        
         .scan-line {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #00ff41, transparent);
+            background: linear-gradient(90deg, transparent, #ff6b6b, transparent);
             animation: scan 3s infinite;
         }
         
@@ -219,11 +264,28 @@
             0% { transform: translateY(-100px); opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
-            100% { transform: translateY(600px); opacity: 0; }
+            100% { transform: translateY(500px); opacity: 0; }
+        }
+        
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #ff6b6b;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
         }
     </style>
 </head>
 <body>
+    <a href="/" class="back-link">← 返回首頁</a>
+    
     <div class="matrix-bg"></div>
     <div class="scan-line"></div>
     
@@ -234,41 +296,37 @@
                 <div class="btn btn-minimize"></div>
                 <div class="btn btn-maximize"></div>
             </div>
-            <span>root@ctf-server:~$</span>
+            <span>root@admin-console:~$</span>
         </div>
         
         <div class="terminal-content">
-            <div class="ascii-art">
-  ██████╗████████╗███████╗     ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗
- ██╔════╝╚══██╔══╝██╔════╝     ██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║
- ██║        ██║   █████╗       ███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║
- ██║        ██║   ██╔══╝       ╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║
- ╚██████╗   ██║   ██║          ███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║
-  ╚═════╝   ╚═╝   ╚═╝          ╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝
-            </div>
-            
-            <div class="prompt-line">
-                <span class="prompt-symbol">></span> 系統初始化中...<span class="cursor"></span>
-            </div>
-            
-            <div class="prompt-line">
-                <span class="prompt-symbol">></span> 驗證訪問權限...
-            </div>
-            
-            <div class="prompt-line glitch">
-                <span class="prompt-symbol">></span> 請輸入小隊編號以進入挑戰系統
-            </div>
-            
-            <form method="post" action="/set_team">
-                <div class="input-group">
-                    <span class="input-prefix">TEAM_ID:</span>
-                    <input type="number" name="team" min="1" max="9" required placeholder="?">
-                    <button type="submit" class="submit-btn">ACCESS</button>
+            <div class="admin-header">
+                <div class="admin-title">
+                    ADMIN ACCESS<span class="cursor"></span>
                 </div>
-            </form>
+                <div class="admin-subtitle">
+                    授權人員專用控制台
+                </div>
+            </div>
+            
+            {% if error %}
+            <div class="error-message">
+                ❌ {{ error }}
+            </div>
+            {% endif %}
+            
+            <div class="login-section">
+                <form method="post" action="/admin/login">
+                    <div class="input-group">
+                        <span class="input-prefix">PASSWORD:</span>
+                        <input type="password" name="password" placeholder="••••••••••" required autofocus>
+                    </div>
+                    <button type="submit" class="submit-btn">AUTHENTICATE</button>
+                </form>
+            </div>
             
             <div class="warning-text">
-                ⚠️ 未經授權的訪問將被記錄並追踪 ⚠️
+                ⚠️ 此區域僅限授權管理員訪問 ⚠️
             </div>
         </div>
     </div>
@@ -296,7 +354,7 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#00ff41';
+            ctx.fillStyle = '#ff6b6b';
             ctx.font = fontSize + 'px Source Code Pro';
             
             for (let i = 0; i < drops.length; i++) {
@@ -312,25 +370,38 @@
         
         setInterval(draw, 50);
         
-        // 打字效果
-        const prompts = document.querySelectorAll('.prompt-line');
-        prompts.forEach((prompt, index) => {
-            prompt.style.opacity = '0';
-            setTimeout(() => {
-                prompt.style.opacity = '1';
-                prompt.style.animation = 'fadeIn 0.5s ease-in';
-            }, index * 800);
-        });
+        // 輸入框特效
+        const input = document.querySelector('input[type="password"]');
         
-        // 輸入框焦點效果
-        const input = document.querySelector('input[type="number"]');
         input.addEventListener('focus', () => {
-            input.style.textShadow = '0 0 10px #00ff41';
+            input.style.textShadow = '0 0 15px #ff6b6b';
+            input.parentElement.parentElement.style.boxShadow = '0 0 20px rgba(255, 107, 107, 0.3)';
         });
         
         input.addEventListener('blur', () => {
             input.style.textShadow = 'none';
+            input.parentElement.parentElement.style.boxShadow = 'none';
         });
+        
+        // 提交按鈕效果
+        const submitBtn = document.querySelector('.submit-btn');
+        submitBtn.addEventListener('click', () => {
+            submitBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                submitBtn.style.transform = '';
+            }, 100);
+        });
+        
+        // 入場動畫
+        const terminal = document.querySelector('.terminal');
+        terminal.style.transform = 'scale(0.8) translateY(50px)';
+        terminal.style.opacity = '0';
+        
+        setTimeout(() => {
+            terminal.style.transition = 'all 0.8s ease-out';
+            terminal.style.transform = 'scale(1) translateY(0)';
+            terminal.style.opacity = '1';
+        }, 100);
     </script>
 </body>
 </html>

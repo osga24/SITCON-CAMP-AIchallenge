@@ -1,0 +1,34 @@
+2025-07-07 12:54:10,828 - main - INFO - CTF Server starting up...
+2025-07-07 12:54:13,457 - main - INFO - CTF Server shutting down...
+2025-07-07 12:54:16,687 - main - INFO - CTF Server starting up...
+2025-07-07 12:54:28,152 - main - INFO - Team 1 logged in
+2025-07-07 12:54:33,170 - main - ERROR - Rate limit check failed: no such table: rate_limits
+2025-07-07 12:54:33,170 - main - ERROR - Failed to record submission: no such table: submissions
+2025-07-07 12:54:33,171 - main - ERROR - Failed to update team level for team 1: no such column: last_updated
+2025-07-07 12:54:33,171 - main - INFO - Team 1 completed level 1
+2025-07-07 12:54:33,842 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 12:54:38,888 - main - ERROR - Rate limit check failed: no such table: rate_limits
+2025-07-07 12:54:38,888 - main - ERROR - Failed to record submission: no such table: submissions
+2025-07-07 12:54:38,889 - main - ERROR - Failed to update team level for team 1: no such column: last_updated
+2025-07-07 12:54:38,889 - main - INFO - Team 1 completed level 1
+2025-07-07 12:54:39,327 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 12:54:49,397 - main - INFO - Admin logged in successfully
+2025-07-07 12:54:49,411 - main - ERROR - Failed to load leaderboard: no such column: last_updated
+2025-07-07 12:54:55,372 - main - INFO - CTF Server shutting down...
+2025-07-07 15:26:31,066 - main - INFO - CTF Server starting up...
+2025-07-07 15:26:37,969 - main - INFO - Team 1 logged in
+2025-07-07 15:26:42,243 - main - ERROR - Rate limit check failed: no such table: rate_limits
+2025-07-07 15:26:42,246 - main - ERROR - Failed to record submission: no such table: submissions
+2025-07-07 15:26:42,247 - main - ERROR - Failed to update team level for team 1: no such column: last_updated
+2025-07-07 15:26:42,247 - main - INFO - Team 1 completed level 1
+2025-07-07 15:26:42,614 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:26:55,106 - main - INFO - CTF Server shutting down...
+2025-07-07 15:27:18,519 - main - INFO - CTF Server starting up...
+2025-07-07 15:27:24,017 - main - ERROR - Rate limit check failed: no such table: rate_limits
+2025-07-07 15:27:24,017 - main - ERROR - Failed to record submission: no such table: submissions
+2025-07-07 15:27:24,017 - main - ERROR - Failed to update team level for team 1: no such column: last_updated
+2025-07-07 15:27:24,017 - main - INFO - Team 1 completed level 1
+2025-07-07 15:27:24,483 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:27:44,499 - main - INFO - Admin logged in successfully
+2025-07-07 15:27:44,516 - main - ERROR - Failed to load leaderboard: no such column: last_updated
+2025-07-07 15:27:49,837 - main - INFO - CTF Server shutting down...

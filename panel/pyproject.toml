@@ -3,8 +3,11 @@ name = "ctf-project"
 version = "0.1.0"
 dependencies = [
     "fastapi",
-    "uvicorn",
+    "uvicorn[standard]",
     "jinja2",
-    "itsdangerous"
+    "itsdangerous",
+    "python-multipart>=0.0.20",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.0.1",
 ]
 requires-python = ">=3.8"
