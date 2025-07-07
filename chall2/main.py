@@ -5,8 +5,11 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import openai
 import os
+
 from typing import List, Dict
 from dotenv import load_dotenv
+from pymongo import MongoClient
+from datetime import datetime
 
 load_dotenv()
 
@@ -19,8 +22,22 @@ api_key = os.getenv("API_KEY")
 if not api_key:
     raise ValueError("請設置 API_KEY 環境變數")
 
+mongodb_url = os.getenv("MONGODB")
+if not mongodb_url:
+    raise ValueError("請設置 MONGODB 環境變數")
+
 openai.api_key = api_key
 openai.api_base = "https://api.juheai.top/v1"
+
+# MongoDB 連接
+try:
+    mongo_client = MongoClient(mongodb_url)
+    db = mongo_client.sitcon_camp
+    chall1_collection = db.chall1
+    print("MongoDB 連接成功")
+except Exception as e:
+    print(f"MongoDB 連接失敗: {e}")
+    raise
 
 session_histories: Dict[str, List[Dict[str, str]]] = {}
 
@@ -42,7 +59,23 @@ def get_session_history(session_id: str) -> List[Dict[str, str]]:
     
     return session_histories[session_id]
 
-
+def save_to_mongodb(team_id: str, user_input: str, ai_response: str):
+    """將對話記錄保存到 MongoDB"""
+    try:
+        document = {
+            "team_id": int(team_id),
+            "timestamp": datetime.utcnow(),
+            "user_input": user_input,
+            "ai_response": ai_response,
+            "challenge": "chall1"
+        }
+        
+        result = chall1_collection.insert_one(document)
+        print(f"MongoDB 寫入成功，ID: {result.inserted_id}")
+        
+    except Exception as e:
+        print(f"MongoDB 寫入失敗: {e}")
+        # 不拋出異常，避免影響主要功能
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
@@ -93,6 +126,9 @@ async def chat_with_terminal(chat_message: ChatMessage):
             if len(chat_history) > 40:  # 保持最近 40 條訊息 (20 組對話)
                 chat_history[:] = chat_history[-40:]
             
+            # 保存到 MongoDB
+            save_to_mongodb(session_id, command, ai_response)
+            
         except Exception as api_error:
             error_msg = str(api_error)
             ai_response = error_msg
@@ -109,9 +145,27 @@ async def chat_with_terminal(chat_message: ChatMessage):
 @app.get("/debug/state")
 async def debug_state():
     """調試用：查看當前狀態"""
-    return {
-        "total_sessions": len(session_histories)
-    }
+    try:
+        # 查詢 MongoDB 中的記錄數量
+        total_records = chall1_collection.count_documents({})
+        team_stats = []
+        
+        # 獲取每個隊伍的統計
+        for team_id in range(1, 11):
+            count = chall1_collection.count_documents({"team_id": team_id})
+            if count > 0:
+                team_stats.append({"team_id": team_id, "message_count": count})
+        
+        return {
+            "total_sessions": len(session_histories),
+            "mongodb_total_records": total_records,
+            "team_statistics": team_stats
+        }
+    except Exception as e:
+        return {
+            "total_sessions": len(session_histories),
+            "mongodb_error": str(e)
+        }
 
 
 if __name__ == "__main__":

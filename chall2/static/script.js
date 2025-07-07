@@ -1,3 +1,81 @@
+// Team Input Handler
+class TeamInputHandler {
+  constructor() {
+    this.teamInputScreen = document.getElementById("team-input-screen");
+    this.terminalContainer = document.getElementById("terminal-container");
+    this.teamNumberInput = document.getElementById("team-number");
+    this.teamSubmitButton = document.getElementById("team-submit");
+    
+    this.setupEventListeners();
+    this.teamNumberInput.focus();
+  }
+
+  setupEventListeners() {
+    // Handle Enter key in team number input
+    this.teamNumberInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        this.handleTeamSubmit();
+      }
+    });
+
+    // Handle submit button click
+    this.teamSubmitButton.addEventListener("click", () => {
+      this.handleTeamSubmit();
+    });
+  }
+
+  handleTeamSubmit() {
+    const teamNumber = this.teamNumberInput.value.trim();
+    
+    if (!teamNumber) {
+      this.showError("請輸入隊伍編號");
+      return;
+    }
+
+    // Validate team number - must be a number between 1-10
+    const teamNum = parseInt(teamNumber);
+    if (isNaN(teamNum) || !Number.isInteger(teamNum) || teamNum < 1 || teamNum > 10) {
+      this.showError("隊伍編號必須是 1-10 之間的數字");
+      return;
+    }
+
+    // Store team number (you can send this to backend if needed)
+    sessionStorage.setItem('teamNumber', teamNumber);
+    
+    // Hide team input screen and show terminal
+    this.showTerminal();
+  }
+
+  showError(message) {
+    // Remove existing error message
+    const existingError = document.querySelector('.team-error');
+    if (existingError) {
+      existingError.remove();
+    }
+
+    // Add new error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'team-error';
+    errorDiv.textContent = message;
+    this.teamNumberInput.parentNode.appendChild(errorDiv);
+
+    // Clear error after 3 seconds
+    setTimeout(() => {
+      if (errorDiv.parentNode) {
+        errorDiv.remove();
+      }
+    }, 3000);
+  }
+
+  showTerminal() {
+    this.teamInputScreen.style.display = 'none';
+    this.terminalContainer.style.display = 'flex';
+    
+    // Initialize terminal after showing it
+    new Terminal();
+  }
+}
+
 class Terminal {
   constructor() {
     this.output = document.getElementById("terminal-output");
@@ -7,26 +85,18 @@ class Terminal {
     this.sessionId = this.getOrCreateSessionId();
 
     this.setupEventListeners();
+    
+    // Show welcome message with team number
+    const teamNumber = sessionStorage.getItem('teamNumber');
     this.addSystemMessage(
-      'Ubuntu Terminal Simulator ready. Type "help" for available commands.'
+      `歡迎 Team ${teamNumber}! Ubuntu Terminal Simulator ready. Type "help" for available commands.`
     );
   }
 
   getOrCreateSessionId() {
-    // 每次都生成新的 session ID
-    return this.generateUUID();
+    // 使用 team number 作為 session ID
+    return sessionStorage.getItem('teamNumber') || 'unknown';
   }
-
-  generateUUID() {
-    // 簡單的 UUID v4 生成器
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0;
-      const v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-
-
 
   setupEventListeners() {
     this.input.addEventListener("keydown", (e) => {
@@ -160,5 +230,5 @@ class Terminal {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  new Terminal();
+  new TeamInputHandler();
 });

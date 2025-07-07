@@ -7,7 +7,20 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="terminal-container">
+    <!-- Team Number Input Screen -->
+    <div id="team-input-screen" class="team-input-container">
+        <div class="team-input-box">
+            <h1 class="team-input-title">SITCON CAMP</h1>
+            <div class="team-input-form">
+                <label for="team-number" class="team-label">請輸入隊伍編號</label>
+                <input type="number" id="team-number" class="team-input" placeholder="輸入您的隊伍編號 (1-10)" autocomplete="off" min="1" max="10">
+                <button id="team-submit" class="team-button">進入系統</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminal Interface (initially hidden) -->
+    <div class="terminal-container" id="terminal-container" style="display: none;">
         <div class="terminal-header">
             <div class="terminal-buttons">
                 <span class="button red"></span>
