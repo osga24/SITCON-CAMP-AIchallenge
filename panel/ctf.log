@@ -109,3 +109,23 @@
 2025-07-07 15:48:56,973 - main - INFO - Team 2 logged in
 2025-07-07 15:48:57,266 - watchfiles.main - INFO - 1 change detected
 2025-07-07 15:48:57,620 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:54:55,828 - watchfiles.main - INFO - 31 changes detected
+2025-07-07 15:54:55,995 - main - INFO - CTF Server starting up...
+2025-07-07 15:54:56,196 - watchfiles.main - INFO - 111 changes detected
+2025-07-07 15:54:58,997 - main - INFO - Team 1 logged in
+2025-07-07 15:54:59,141 - watchfiles.main - INFO - 7 changes detected
+2025-07-07 15:55:03,177 - main - INFO - Team 1 completed level 1
+2025-07-07 15:55:03,244 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:55:03,546 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:55:24,743 - main - INFO - Team 1 completed level 2
+2025-07-07 15:55:24,849 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:55:25,066 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:55:28,072 - main - INFO - Team 1 completed level 3
+2025-07-07 15:55:28,163 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:55:28,404 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:55:50,707 - main - INFO - Team 1 completed level 3
+2025-07-07 15:55:50,782 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:55:51,077 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:57:57,990 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:58:00,674 - watchfiles.main - INFO - 1 change detected
+2025-07-07 16:07:43,234 - main - INFO - CTF Server shutting down...
