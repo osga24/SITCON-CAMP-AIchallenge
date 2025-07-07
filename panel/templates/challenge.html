@@ -377,14 +377,14 @@
                 <form method="post" action="/submit/{{ level }}">
                     <div class="input-group">
                         <span class="input-prefix">FLAG:</span>
-                        <input type="text" name="flag" placeholder="CTF{...}" required>
+                        <input type="text" name="flag" placeholder="SITCON{...}" required>
                         <button type="submit" class="submit-btn">SUBMIT</button>
                     </div>
                 </form>
             </div>
             
             <div class="hint-section">
-                記住：每個挑戰都有其獨特的解法，仔細觀察細節！
+                {{ info.hint }}
             </div>
             
             <div class="progress-bar">

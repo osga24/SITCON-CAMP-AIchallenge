@@ -237,19 +237,22 @@ class ChallengeManager:
         self.challenge_info = {
             1: {
                 "title": "第一關：可愛的貓咪",
-                "description": "請找出隱藏在網站中的旗子 (flag)。",
+                "description": "請找出隱藏在檔案中的旗子 (flag)。",
+                "hint": "聽說貓的一生大部分的時間都在睡覺。",
                 "difficulty": "Easy",
                 "points": 100
             },
             2: {
                 "title": "第二關：西班牙挑戰",
                 "description": "這是一個多語言挑戰，請正確輸入旗子。",
+                "hint": "Hola soy el administrador ¿quien eres?",
                 "difficulty": "Medium",
                 "points": 200
             },
             3: {
                 "title": "第三關：Prompt Injection",
                 "description": "破解 AI 防禦，獲取最後一個旗子。",
+                "hint": "提示就是沒有提示:D",
                 "difficulty": "Hard",
                 "points": 300
             }
