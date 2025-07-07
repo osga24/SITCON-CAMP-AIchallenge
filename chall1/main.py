@@ -72,6 +72,7 @@ def save_to_mongodb(team_id: str, user_input: str, ai_response: str):
         
         result = chall1_collection.insert_one(document)
         print(f"MongoDB 寫入成功，ID: {result.inserted_id}")
+        print(f"User Input: {user_input}, AI Response: {ai_response}")
         
     except Exception as e:
         print(f"MongoDB 寫入失敗: {e}")

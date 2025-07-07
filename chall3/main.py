@@ -33,7 +33,7 @@ openai.api_base = "https://api.juheai.top/v1"
 try:
     mongo_client = MongoClient(mongodb_url, tlsAllowInvalidCertificates=True)
     db = mongo_client.sitcon_camp
-    chall3_collection = db.chall3
+    chall1_collection = db.chall1
     print("MongoDB 連接成功")
 except Exception as e:
     print(f"MongoDB 連接失敗: {e}")
@@ -67,11 +67,12 @@ def save_to_mongodb(team_id: str, user_input: str, ai_response: str):
             "timestamp": datetime.utcnow(),
             "user_input": user_input,
             "ai_response": ai_response,
-            "challenge": "chall3"
+            "challenge": "chall1"
         }
         
-        result = chall3_collection.insert_one(document)
+        result = chall1_collection.insert_one(document)
         print(f"MongoDB 寫入成功，ID: {result.inserted_id}")
+        print(f"User Input: {user_input}, AI Response: {ai_response}")
         
     except Exception as e:
         print(f"MongoDB 寫入失敗: {e}")
@@ -147,12 +148,12 @@ async def debug_state():
     """調試用：查看當前狀態"""
     try:
         # 查詢 MongoDB 中的記錄數量
-        total_records = chall3_collection.count_documents({})
+        total_records = chall1_collection.count_documents({})
         team_stats = []
         
         # 獲取每個隊伍的統計
         for team_id in range(1, 11):
-            count = chall3_collection.count_documents({"team_id": team_id})
+            count = chall1_collection.count_documents({"team_id": team_id})
             if count > 0:
                 team_stats.append({"team_id": team_id, "message_count": count})
         
@@ -170,4 +171,4 @@ async def debug_state():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=30009)
+    uvicorn.run(app, host="0.0.0.0", port=30007)
