@@ -32,3 +32,80 @@
 2025-07-07 15:27:44,499 - main - INFO - Admin logged in successfully
 2025-07-07 15:27:44,516 - main - ERROR - Failed to load leaderboard: no such column: last_updated
 2025-07-07 15:27:49,837 - main - INFO - CTF Server shutting down...
+2025-07-07 15:34:45,211 - main - INFO - CTF Server starting up...
+2025-07-07 15:34:45,372 - watchfiles.main - INFO - 149 changes detected
+2025-07-07 15:35:15,468 - main - INFO - Team 1 logged in
+2025-07-07 15:35:15,653 - watchfiles.main - INFO - 9 changes detected
+2025-07-07 15:35:26,292 - main - INFO - Team 1 logged in
+2025-07-07 15:35:26,556 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:38:28,337 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:38:28,688 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:38:42,083 - main - INFO - Database initialized successfully
+2025-07-07 15:38:42,323 - watchfiles.main - INFO - 3 changes detected
+2025-07-07 15:39:00,019 - main - INFO - CTF Server shutting down...
+2025-07-07 15:39:02,972 - main - INFO - CTF Server starting up...
+2025-07-07 15:39:03,241 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:39:03,594 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:39:13,091 - main - INFO - Team 1 logged in
+2025-07-07 15:39:13,196 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:40:48,993 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:40:49,135 - main - INFO - CTF Server shutting down...
+2025-07-07 15:40:49,510 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:40:51,015 - main - INFO - CTF Server starting up...
+2025-07-07 15:40:51,118 - watchfiles.main - INFO - 3 changes detected
+2025-07-07 15:40:59,264 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:40:59,464 - main - INFO - CTF Server shutting down...
+2025-07-07 15:40:59,830 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:41:01,537 - main - INFO - CTF Server starting up...
+2025-07-07 15:41:01,739 - watchfiles.main - INFO - 3 changes detected
+2025-07-07 15:42:12,724 - main - INFO - CTF Server shutting down...
+2025-07-07 15:42:16,810 - main - INFO - CTF Server starting up...
+2025-07-07 15:42:17,146 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:42:17,499 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:42:22,662 - main - INFO - Setting team 1 in session
+2025-07-07 15:42:22,662 - main - INFO - Team 1 logged in, session after set: {'team': 1}
+2025-07-07 15:42:22,672 - main - INFO - get_current_team: session data = {}, team = None
+2025-07-07 15:42:23,782 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:42:24,134 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:42:24,485 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:43:32,305 - main - INFO - Setting team 1 in session
+2025-07-07 15:43:32,305 - main - INFO - Team 1 logged in, session after set: {'team': 1}
+2025-07-07 15:43:32,314 - main - INFO - get_current_team: session data = {'team': 1}, team = 1
+2025-07-07 15:43:32,618 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:43:38,640 - main - INFO - CTF Server shutting down...
+2025-07-07 15:43:49,780 - main - INFO - CTF Server starting up...
+2025-07-07 15:43:49,946 - watchfiles.main - INFO - 3 changes detected
+2025-07-07 15:44:21,332 - main - INFO - Team 1 logged in
+2025-07-07 15:44:21,565 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:45:31,336 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:45:31,742 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:45:31,793 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:45:35,921 - main - INFO - Team 1 completed level 1
+2025-07-07 15:45:36,288 - watchfiles.main - INFO - 3 changes detected
+2025-07-07 15:45:36,327 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:45:36,641 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:45:50,920 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:45:51,325 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:45:51,470 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:45:51,731 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:45:53,100 - main - INFO - Team 1 completed level 2
+2025-07-07 15:45:53,245 - watchfiles.main - INFO - 3 changes detected
+2025-07-07 15:45:53,556 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:46:01,464 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:46:01,868 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:46:01,949 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:46:04,140 - main - INFO - Team 1 completed level 3
+2025-07-07 15:46:04,292 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:46:04,525 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:46:04,645 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:46:26,895 - main - INFO - Team 1 completed level 3
+2025-07-07 15:46:27,112 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:46:27,345 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:46:27,515 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:48:42,541 - main - INFO - Team 1 completed level 3
+2025-07-07 15:48:42,591 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:48:42,943 - httpx - INFO - HTTP Request: POST https://discord.com/api/webhooks/1391456740549197845/VtSk-vh0TS4TVky1xYeKwbFEj5FdjgQCw87Gfl8AsssM_hu19TY19ySM0PcRS7wlIhIY "HTTP/1.1 204 No Content"
+2025-07-07 15:48:42,945 - watchfiles.main - INFO - 2 changes detected
+2025-07-07 15:48:56,973 - main - INFO - Team 2 logged in
+2025-07-07 15:48:57,266 - watchfiles.main - INFO - 1 change detected
+2025-07-07 15:48:57,620 - watchfiles.main - INFO - 1 change detected
