@@ -33,7 +33,7 @@ openai.api_base = "https://api.juheai.top/v1"
 try:
     mongo_client = MongoClient(mongodb_url)
     db = mongo_client.sitcon_camp
-    chall1_collection = db.chall1
+    chall3_collection = db.chall3
     print("MongoDB 連接成功")
 except Exception as e:
     print(f"MongoDB 連接失敗: {e}")
@@ -67,10 +67,10 @@ def save_to_mongodb(team_id: str, user_input: str, ai_response: str):
             "timestamp": datetime.utcnow(),
             "user_input": user_input,
             "ai_response": ai_response,
-            "challenge": "chall1"
+            "challenge": "chall3"
         }
         
-        result = chall1_collection.insert_one(document)
+        result = chall3_collection.insert_one(document)
         print(f"MongoDB 寫入成功，ID: {result.inserted_id}")
         
     except Exception as e:
@@ -147,12 +147,12 @@ async def debug_state():
     """調試用：查看當前狀態"""
     try:
         # 查詢 MongoDB 中的記錄數量
-        total_records = chall1_collection.count_documents({})
+        total_records = chall3_collection.count_documents({})
         team_stats = []
         
         # 獲取每個隊伍的統計
         for team_id in range(1, 11):
-            count = chall1_collection.count_documents({"team_id": team_id})
+            count = chall3_collection.count_documents({"team_id": team_id})
             if count > 0:
                 team_stats.append({"team_id": team_id, "message_count": count})
         
@@ -170,4 +170,4 @@ async def debug_state():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=30008)
+    uvicorn.run(app, host="0.0.0.0", port=30009)
