@@ -124,8 +124,8 @@ async def chat_with_terminal(chat_message: ChatMessage):
             chat_history.append({"role": "assistant", "content": ai_response})
             
             # 限制歷史長度避免 token 過多
-            if len(chat_history) > 40:  # 保持最近 40 條訊息 (20 組對話)
-                chat_history[:] = chat_history[-40:]
+            if len(chat_history) > 6:  # 保持最近 6 條訊息 (3 組對話)
+                chat_history[:] = chat_history[-6:]
             
             # 保存到 MongoDB
             save_to_mongodb(session_id, command, ai_response)
