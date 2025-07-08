@@ -1,3 +1,6 @@
 .env
 prompta.txt
 node_modules
+__pycache__
+ctf.log
+panel/*.db
