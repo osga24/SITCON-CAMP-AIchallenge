@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mission Accomplished!</title>
+    <title>Mission Complete</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap');
         
@@ -9,14 +9,14 @@
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
             color: #00ff41;
             font-family: 'Source Code Pro', monospace;
-            font-size: 1.2em;
+            font-size: 1.1em;
             padding: 0;
             margin: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
         .matrix-bg {
@@ -25,33 +25,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.1;
+            opacity: 0.05;
             z-index: -1;
         }
         
-        .success-container {
-            text-align: center;
-            max-width: 800px;
-            position: relative;
-            z-index: 10;
-        }
-        
         .terminal {
+            width: 700px;
+            max-width: 95vw;
             background: rgba(0, 0, 0, 0.95);
             border: 2px solid #00ff41;
             border-radius: 12px;
             box-shadow: 
-                0 0 40px #00ff41,
-                inset 0 0 40px rgba(0, 255, 65, 0.1);
+                0 0 30px #00ff41,
+                inset 0 0 30px rgba(0, 255, 65, 0.1);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            animation: terminal-glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes terminal-glow {
-            0% { box-shadow: 0 0 40px #00ff41, inset 0 0 40px rgba(0, 255, 65, 0.1); }
-            100% { box-shadow: 0 0 60px #00ff41, inset 0 0 60px rgba(0, 255, 65, 0.2); }
         }
         
         .terminal::before {
@@ -101,136 +90,152 @@
         .terminal-content {
             padding: 40px;
             position: relative;
+            text-align: center;
+        }
+        
+        .success-header {
+            margin-bottom: 30px;
         }
         
         .success-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
-        
-        .ascii-celebration {
-            color: #00ff41;
-            font-size: 0.6em;
-            margin-bottom: 30px;
-            text-shadow: 0 0 15px #00ff41;
-            animation: celebration-glow 1.5s ease-in-out infinite alternate;
-        }
-        
-        @keyframes celebration-glow {
-            0% { text-shadow: 0 0 15px #00ff41; }
-            100% { text-shadow: 0 0 25px #00ff41, 0 0 35px #00ff41; }
+            font-size: 3em;
+            margin-bottom: 15px;
         }
         
         .success-title {
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: 700;
             color: #00ff41;
-            text-shadow: 0 0 30px #00ff41;
-            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff41;
+            margin-bottom: 10px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            animation: title-pulse 2s ease-in-out infinite;
+            letter-spacing: 2px;
         }
         
-        @keyframes title-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .team-display {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-            color: #000;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 1.8em;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
-            animation: team-highlight 3s ease-in-out infinite;
-        }
-        
-        @keyframes team-highlight {
-            0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4); }
-            50% { transform: scale(1.1); box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6); }
-        }
-        
-        .completion-message {
-            font-size: 1.3em;
-            line-height: 1.6;
-            margin-bottom: 30px;
+        .success-subtitle {
             color: #00ff41;
-            animation: message-fade-in 3s ease-in;
+            font-size: 1.1em;
+            opacity: 0.8;
+            margin-bottom: 25px;
         }
         
-        @keyframes message-fade-in {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        
-        .stats-section {
+        .team-info {
             background: rgba(0, 255, 65, 0.1);
-            border: 2px solid #00ff41;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 30px 0;
+            border: 1px solid #00ff41;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
             position: relative;
         }
         
-        .stats-section::before {
-            content: "MISSION STATS";
+        .team-info::before {
+            content: "TEAM STATUS";
             position: absolute;
             top: -12px;
             left: 15px;
             background: #000;
             color: #00ff41;
-            padding: 0 15px;
-            font-size: 0.9em;
+            padding: 0 10px;
+            font-size: 0.8em;
             font-weight: 600;
         }
         
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 1.1em;
+        .team-name {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 1.5em;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .completion-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
         }
         
         .stat-value {
-            color: #ff6b6b;
+            font-size: 1.3em;
             font-weight: 600;
+            color: #ff6b6b;
         }
         
-        .congratulations {
+        .completion-message {
+            background: rgba(0, 255, 65, 0.05);
+            border-left: 4px solid #00ff41;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn-action {
+            background: transparent;
+            color: #00ff41;
+            border: 2px solid #00ff41;
+            padding: 12px 25px;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-action:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+        }
+        
+        .btn-primary {
             background: linear-gradient(45deg, #00ff41, #00cc33);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.5em;
-            font-weight: 700;
-            margin-top: 30px;
-            animation: congratulations-shimmer 2s ease-in-out infinite;
+            color: #000;
+            border-color: #00ff41;
         }
         
-        @keyframes congratulations-shimmer {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.5); }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #00cc33, #00ff41);
+            transform: translateY(-2px);
         }
         
         .cursor {
             display: inline-block;
-            width: 3px;
+            width: 2px;
             height: 1.2em;
             background: #00ff41;
             animation: blink 1s infinite;
-            margin-left: 5px;
+            margin-left: 2px;
         }
         
         @keyframes blink {
@@ -238,134 +243,71 @@
             51%, 100% { opacity: 0; }
         }
         
-        .fireworks {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
-        }
-        
-        .firework {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #00ff41;
-            border-radius: 50%;
-            animation: firework-explosion 2s ease-out infinite;
-        }
-        
-        @keyframes firework-explosion {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-            100% {
-                transform: scale(2);
-                opacity: 0;
-            }
-        }
-        
         .scan-line {
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 2px;
             background: linear-gradient(90deg, transparent, #00ff41, transparent);
-            animation: victory-scan 2s infinite;
+            animation: scan 4s infinite;
         }
         
-        @keyframes victory-scan {
+        @keyframes scan {
             0% { transform: translateY(-100px); opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
-            100% { transform: translateY(600px); opacity: 0; }
+            100% { transform: translateY(700px); opacity: 0; }
         }
     </style>
 </head>
 <body>
     <div class="matrix-bg"></div>
     <div class="scan-line"></div>
-    <div class="fireworks"></div>
     
-    <div class="success-container">
-        <div class="terminal">
-            <div class="terminal-header">
-                <div class="terminal-buttons">
-                    <div class="btn btn-close"></div>
-                    <div class="btn btn-minimize"></div>
-                    <div class="btn btn-maximize"></div>
-                </div>
-                <span>root@ctf-server:~$ mission_complete.exe</span>
+    <div class="terminal">
+        <div class="terminal-header">
+            <div class="terminal-buttons">
+                <div class="btn btn-close"></div>
+                <div class="btn btn-minimize"></div>
+                <div class="btn btn-maximize"></div>
+            </div>
+            <span>root@ctf-system:~$ mission_status --complete</span>
+        </div>
+        
+        <div class="terminal-content">
+            <div class="success-header">
+                <div class="success-icon">✅</div>
+                <div class="success-title">Mission Complete<span class="cursor"></span></div>
+                <div class="success-subtitle">All challenges successfully solved</div>
             </div>
             
-            <div class="terminal-content">
-                <div class="success-icon">🎯</div>
-                
-                <div class="ascii-celebration">
-    ███╗   ███╗██╗███████╗███████╗██╗ ██████╗ ███╗   ██╗
-    ████╗ ████║██║██╔════╝██╔════╝██║██╔═══██╗████╗  ██║
-    ██╔████╔██║██║███████╗███████╗██║██║   ██║██╔██╗ ██║
-    ██║╚██╔╝██║██║╚════██║╚════██║██║██║   ██║██║╚██╗██║
-    ██║ ╚═╝ ██║██║███████║███████║██║╚██████╔╝██║ ╚████║
-    ╚═╝     ╚═╝╚═╝╚══════╝╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
-                                                         
-     ██████╗ ██████╗ ███╗   ███╗██████╗ ██╗     ███████╗████████╗███████╗
-    ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██║     ██╔════╝╚══██╔══╝██╔════╝
-    ██║     ██║   ██║██╔████╔██║██████╔╝██║     █████╗     ██║   █████╗  
-    ██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝     ██║   ██╔══╝  
-    ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ███████╗███████╗   ██║   ███████╗
-     ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝   ╚═╝   ╚══════╝
+            <div class="team-info">
+                <div class="team-name">Team {{ team }}</div>
+                <div>Status: CHALLENGES COMPLETED</div>
+            </div>
+            
+            <div class="completion-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-value">100%</div>
                 </div>
-                
-                <div class="success-title">
-                    SYSTEM BREACHED<span class="cursor"></span>
-                </div>
-                
-                <div class="team-display">
-                    小隊 {{ team }} - ELITE HACKERS
-                </div>
-                
-                <div class="completion-message">
-                    所有安全防護已被突破！<br>
-                    您的小隊成功完成了所有挑戰關卡
-                </div>
-                
-                <div class="stats-section">
-                    <div class="stat-item">
-                        <span>挑戰完成狀態:</span>
-                        <span class="stat-value">100% COMPLETE</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>安全等級:</span>
-                        <span class="stat-value">COMPROMISED</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>駭客等級:</span>
-                        <span class="stat-value">LEGENDARY</span>
-                    </div>
-                    <div class="stat-item">
-                        <span>系統狀態:</span>
-                        <span class="stat-value">PWNED</span>
-                    </div>
-                </div>
-                
-                <div class="congratulations">
-                    🏆 恭喜成為 CTF 大師！ 🏆
+                <div class="stat-box">
+                    <div class="stat-label">Security Level</div>
+                    <div class="stat-value">BREACHED</div>
                 </div>
             </div>
+            
+            <div class="completion-message">
+                <strong>// SYSTEM MESSAGE //</strong><br>
+					感謝你參與本測試，你在本測試完成了所有關卡！
+            </div>
+            
         </div>
     </div>
     
     <script>
-        // 矩陣雨效果
+        // 簡單矩陣雨效果
         const canvas = document.createElement('canvas');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -375,7 +317,7 @@
         const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
         const charArray = chars.split("");
         
-        const fontSize = 14;
+        const fontSize = 12;
         const columns = canvas.width / fontSize;
         const drops = [];
         
@@ -401,85 +343,18 @@
             }
         }
         
-        setInterval(draw, 50);
+        setInterval(draw, 60);
         
-        // 煙火效果
-        function createFirework() {
-            const fireworksContainer = document.querySelector('.fireworks');
-            const firework = document.createElement('div');
-            firework.className = 'firework';
-            
-            // 隨機位置
-            firework.style.left = Math.random() * 100 + '%';
-            firework.style.top = Math.random() * 100 + '%';
-            
-            // 隨機顏色
-            const colors = ['#00ff41', '#ff6b6b', '#ffbf00', '#ff8e8e', '#00cc33'];
-            firework.style.background = colors[Math.floor(Math.random() * colors.length)];
-            
-            fireworksContainer.appendChild(firework);
-            
-            // 移除煙火
-            setTimeout(() => {
-                firework.remove();
-            }, 2000);
-        }
-        
-        // 定期創建煙火
-        setInterval(createFirework, 300);
-        
-        // 入場動畫
+        // 簡單入場動畫
         const terminal = document.querySelector('.terminal');
-        terminal.style.transform = 'scale(0.8) translateY(50px)';
         terminal.style.opacity = '0';
+        terminal.style.transform = 'translateY(20px)';
         
         setTimeout(() => {
-            terminal.style.transition = 'all 1s ease-out';
-            terminal.style.transform = 'scale(1) translateY(0)';
+            terminal.style.transition = 'all 0.8s ease-out';
             terminal.style.opacity = '1';
+            terminal.style.transform = 'translateY(0)';
         }, 100);
-        
-        // 數字滾動效果
-        function animateValue(element, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const current = Math.floor(progress * (end - start) + start);
-                element.textContent = current + '%';
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-        
-        // 啟動數字動畫
-        setTimeout(() => {
-            const statElements = document.querySelectorAll('.stat-value');
-            statElements.forEach((element, index) => {
-                if (element.textContent.includes('%')) {
-                    animateValue(element, 0, 100, 2000);
-                }
-            });
-        }, 1500);
-        
-        // 音效模擬（視覺反饋）
-        document.addEventListener('click', () => {
-            document.body.style.animation = 'none';
-            document.body.offsetHeight; // 觸發重排
-            document.body.style.animation = 'flash 0.1s ease-out';
-        });
-        
-        // 添加閃爍效果的 CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes flash {
-                0% { background-color: rgba(0, 255, 65, 0.1); }
-                100% { background-color: transparent; }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>

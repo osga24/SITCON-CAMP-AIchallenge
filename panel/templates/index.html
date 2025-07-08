@@ -10,13 +10,12 @@
             color: #00ff41;
             font-family: 'Source Code Pro', monospace;
             font-size: 1.1em;
-            padding: 0;
+            padding: 20px 0;
             margin: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
         
         .matrix-bg {
@@ -30,8 +29,8 @@
         }
         
         .terminal {
-            width: 800px;
-            max-width: 90vw;
+            width: 900px;
+            max-width: 95vw;
             background: rgba(0, 0, 0, 0.95);
             border: 2px solid #00ff41;
             border-radius: 12px;
@@ -92,22 +91,69 @@
         }
         
         .ascii-art {
+            font-family: 'Source Code Pro', monospace;
             color: #00ff41;
-            font-size: 0.8em;
-            margin-bottom: 20px;
-            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 30px;
             text-shadow: 0 0 10px #00ff41;
+            white-space: pre;
+            overflow-x: auto;
+            display: block;
+            text-align: left;
+            line-height: 1.1;
+            letter-spacing: 0;
+            font-weight: 400;
+            max-width: 100%;
         }
         
-        .prompt-line {
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            text-shadow: 0 0 10px #00ff41;
+        .ascii-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
         
-        .prompt-symbol {
+        .story-section {
+            margin-bottom: 30px;
+        }
+        
+        .story-content {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.05);
+            border-left: 3px solid #00ff41;
+            border-radius: 5px;
+        }
+        
+        .story-line {
+            margin: 10px 0;
+            font-size: 1em;
+            color: #00ff41;
+        }
+        
+        .story-prefix {
             color: #ff6b6b;
-            font-weight: 700;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .story-text {
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #cccccc;
+            font-size: 0.95em;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+        
+        .highlight {
+            color: #00ff41;
+            font-weight: 600;
+            text-shadow: 0 0 5px #00ff41;
+        }
+        
+        .story-text br {
+            margin-bottom: 5px;
         }
         
         .input-group {
@@ -166,43 +212,12 @@
             transform: translateY(0);
         }
         
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background: #00ff41;
-            animation: blink 1s infinite;
-            margin-left: 2px;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        
         .warning-text {
             color: #ff6b6b;
             font-size: 0.9em;
             margin-top: 15px;
             text-align: center;
             opacity: 0.8;
-        }
-        
-        .glitch {
-            animation: glitch 2s infinite;
-        }
-        
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-1px, 1px); }
-            20% { transform: translate(1px, -1px); }
-            30% { transform: translate(-1px, -1px); }
-            40% { transform: translate(1px, 1px); }
-            50% { transform: translate(-1px, 1px); }
-            60% { transform: translate(1px, -1px); }
-            70% { transform: translate(-1px, -1px); }
-            80% { transform: translate(1px, 1px); }
-            90% { transform: translate(-1px, 1px); }
         }
         
         .scan-line {
@@ -221,6 +236,15 @@
             90% { opacity: 1; }
             100% { transform: translateY(600px); opacity: 0; }
         }
+        
+        @media (max-width: 768px) {
+            .ascii-art {
+                font-size: 0.6em;
+            }
+            .terminal {
+                width: 95vw;
+            }
+        }
     </style>
 </head>
 <body>
@@ -238,37 +262,45 @@
         </div>
         
         <div class="terminal-content">
-            <div class="ascii-art">
-  ██████╗████████╗███████╗     ███████╗██╗   ██╗███████╗████████╗███████╗███╗   ███╗
- ██╔════╝╚══██╔══╝██╔════╝     ██╔════╝╚██╗ ██╔╝██╔════╝╚══██╔══╝██╔════╝████╗ ████║
- ██║        ██║   █████╗       ███████╗ ╚████╔╝ ███████╗   ██║   █████╗  ██╔████╔██║
- ██║        ██║   ██╔══╝       ╚════██║  ╚██╔╝  ╚════██║   ██║   ██╔══╝  ██║╚██╔╝██║
- ╚██████╗   ██║   ██║          ███████║   ██║   ███████║   ██║   ███████╗██║ ╚═╝ ██║
-  ╚═════╝   ╚═╝   ╚═╝          ╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝
+            <div class="ascii-container">
+                <div class="ascii-art">███████╗██╗████████╗ ██████╗ ██████╗ ███╗   ██╗     ██████╗ █████╗ ███╗   ███╗██████╗ 
+██╔════╝██║╚══██╔══╝██╔════╝██╔═══██╗████╗  ██║    ██╔════╝██╔══██╗████╗ ████║██╔══██╗
+███████╗██║   ██║   ██║     ██║   ██║██╔██╗ ██║    ██║     ███████║██╔████╔██║██████╔╝
+╚════██║██║   ██║   ██║     ██║   ██║██║╚██╗██║    ██║     ██╔══██║██║╚██╔╝██║██╔═══╝ 
+███████║██║   ██║   ╚██████╗╚██████╔╝██║ ╚████║    ╚██████╗██║  ██║██║ ╚═╝ ██║██║     
+╚══════╝╚═╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝     ╚═════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     </div>
             </div>
             
-            <div class="prompt-line">
-                <span class="prompt-symbol">></span> 系統初始化中...<span class="cursor"></span>
-            </div>
-            
-            <div class="prompt-line">
-                <span class="prompt-symbol">></span> 驗證訪問權限...
-            </div>
-            
-            <div class="prompt-line glitch">
-                <span class="prompt-symbol">></span> 請輸入小隊編號以進入挑戰系統
+            <div class="story-section">
+                <div class="story-content">
+                    <div class="story-line">
+                        <span class="story-prefix">[DATA]</span> 2025年7月9日 - 載入成功
+                    </div>
+                    
+                    <div class="story-text">
+					你好測試者，歡迎來到 SITCON OS 滲透測試。<br>
+					我們開發了一款整合 AI 助理的 Linux 發行版：<code>AiHelp</code>。<br>
+					你的任務很簡單：<br>
+					想辦法讓 AiHelp 洩露 <code>/rootflag.txt</code> 的內容。<br>
+					請注意，它被設計為「絕不會」透露敏感資訊……理論上。<br><br>
+                    </div>
+                    
+                    <div class="story-line">
+                        <span class="story-prefix">[SYSTEM]</span> 選擇你的小隊並開始任務
+                    </div>
+                </div>
             </div>
             
             <form method="post" action="/set_team">
                 <div class="input-group">
                     <span class="input-prefix">TEAM_ID:</span>
                     <input type="number" name="team" min="1" max="9" required placeholder="?">
-                    <button type="submit" class="submit-btn">ACCESS</button>
+                    <button type="submit" class="submit-btn">開始任務</button>
                 </div>
             </form>
             
             <div class="warning-text">
-                ⚠️ 未經授權的訪問將被記錄並追踪 ⚠️
+                ⚠️ 系統級距不穩定，可能會因為 AiHelp 的關係影響檔案位置 ⚠️
             </div>
         </div>
     </div>
@@ -312,15 +344,43 @@
         
         setInterval(draw, 50);
         
-        // 打字效果
-        const prompts = document.querySelectorAll('.prompt-line');
-        prompts.forEach((prompt, index) => {
-            prompt.style.opacity = '0';
-            setTimeout(() => {
-                prompt.style.opacity = '1';
-                prompt.style.animation = 'fadeIn 0.5s ease-in';
-            }, index * 800);
+        // 故事動畫效果
+        const storyLines = document.querySelectorAll('.story-line');
+        const storyText = document.querySelector('.story-text');
+        
+        // 初始化故事元素為隱藏
+        [...storyLines, storyText].forEach(element => {
+            if (element) element.style.opacity = '0';
         });
+        
+        // 按順序顯示故事元素
+        let delay = 500;
+        
+        storyLines.forEach((line, index) => {
+            setTimeout(() => {
+                line.style.opacity = '1';
+                line.style.animation = 'fadeIn 0.3s ease-in';
+            }, delay);
+            delay += 400;
+        });
+        
+        // 故事內容
+        setTimeout(() => {
+            if (storyText) {
+                storyText.style.opacity = '1';
+                storyText.style.animation = 'fadeIn 0.8s ease-in';
+            }
+        }, delay);
+        
+        // 添加fadeIn動畫
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
         
         // 輸入框焦點效果
         const input = document.querySelector('input[type="number"]');
