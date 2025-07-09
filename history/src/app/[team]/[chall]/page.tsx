@@ -23,12 +23,18 @@ export default function ChallengePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchHistory();
+    fetchHistory(true); // Initial load
+    const interval = setInterval(() => {
+      fetchHistory(false); // Subsequent automatic refreshes
+    }, 2000);
+    return () => clearInterval(interval);
   }, [team, chall]);
 
-  const fetchHistory = async () => {
+  const fetchHistory = async (isInitialLoad = false) => {
     try {
-      setLoading(true);
+      if (isInitialLoad) {
+        setLoading(true);
+      }
       const response = await fetch(`/api/history/${team}/${chall}`);
 
       if (!response.ok) {
@@ -40,7 +46,9 @@ export default function ChallengePage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "載入失敗");
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setLoading(false);
+      }
     }
   };
 
@@ -69,7 +77,7 @@ export default function ChallengePage() {
         <div className="text-center">
           <div className="text-xl mb-4">Error: {error}</div>
           <button
-            onClick={fetchHistory}
+            onClick={() => fetchHistory(true)}
             className="text-white underline hover:text-gray-300"
           >
             [Retry]
@@ -130,8 +138,15 @@ export default function ChallengePage() {
                       === Session {history.length - index} | {formatTimestamp(record.timestamp)} ===
                     </div>
                     
-                    {/* AI Response as Terminal Output */}
+                    {/* User Input */}
                     <div className="space-y-1">
+                      <div className="text-green-400">
+                        <span className="text-gray-500">sitcon@ubuntu:~$</span> {record.user_input}
+                      </div>
+                    </div>
+                    
+                    {/* AI Response as Terminal Output */}
+                    <div className="space-y-1 ml-0">
                       <div className="text-cyan-300 whitespace-pre-wrap break-words leading-relaxed">
                         {record.ai_response}
                       </div>
@@ -145,7 +160,7 @@ export default function ChallengePage() {
             <div className="mt-8 pt-4 border-t border-gray-700">
               <div className="flex items-center space-x-4 text-xs text-gray-500">
                 <button
-                  onClick={fetchHistory}
+                  onClick={() => fetchHistory(true)}
                   className="text-green-400 hover:text-green-300 underline"
                 >
                   [Refresh]
