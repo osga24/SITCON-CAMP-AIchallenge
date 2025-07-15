@@ -1,360 +1,381 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Mission Complete</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap');
-        
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: #00ff41;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            padding: 0;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
+      @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap");
+
+      body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #00ff41;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.1em;
+        padding: 0;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+      }
+
+      .matrix-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.05;
+        z-index: -1;
+      }
+
+      .terminal {
+        width: 700px;
+        max-width: 95vw;
+        background: rgba(0, 0, 0, 0.95);
+        border: 2px solid #00ff41;
+        border-radius: 12px;
+        box-shadow: 0 0 30px #00ff41, inset 0 0 30px rgba(0, 255, 65, 0.1);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .terminal::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 255, 65, 0.03) 2px,
+          rgba(0, 255, 65, 0.03) 4px
+        );
+        pointer-events: none;
+      }
+
+      .terminal-header {
+        background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
+        color: #000;
+        padding: 12px 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .terminal-buttons {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: none;
+      }
+
+      .btn-close {
+        background: #ff5555;
+      }
+      .btn-minimize {
+        background: #ffaa00;
+      }
+      .btn-maximize {
+        background: #00ff00;
+      }
+
+      .terminal-content {
+        padding: 40px;
+        position: relative;
+        text-align: center;
+      }
+
+      .success-header {
+        margin-bottom: 30px;
+      }
+
+      .success-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .success-title {
+        font-size: 2em;
+        font-weight: 700;
+        color: #00ff41;
+        text-shadow: 0 0 20px #00ff41;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .success-subtitle {
+        color: #00ff41;
+        font-size: 1.1em;
+        opacity: 0.8;
+        margin-bottom: 25px;
+      }
+
+      .team-info {
+        background: rgba(0, 255, 65, 0.1);
+        border: 1px solid #00ff41;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        position: relative;
+      }
+
+      .team-info::before {
+        content: "TEAM STATUS";
+        position: absolute;
+        top: -12px;
+        left: 15px;
+        background: #000;
+        color: #00ff41;
+        padding: 0 10px;
+        font-size: 0.8em;
+        font-weight: 600;
+      }
+
+      .team-name {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        color: #000;
+        padding: 10px 20px;
+        border-radius: 15px;
+        font-size: 1.5em;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 15px;
+      }
+
+      .completion-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .stat-box {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid #00ff41;
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+      }
+
+      .stat-label {
+        font-size: 0.9em;
+        opacity: 0.8;
+        margin-bottom: 5px;
+      }
+
+      .stat-value {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #ff6b6b;
+      }
+
+      .completion-message {
+        background: rgba(0, 255, 65, 0.05);
+        border-left: 4px solid #00ff41;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: left;
+        font-size: 1.1em;
+        line-height: 1.5;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .btn-action {
+        background: transparent;
+        color: #00ff41;
+        border: 2px solid #00ff41;
+        padding: 12px 25px;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-action:hover {
+        background: #00ff41;
+        color: #000;
+        box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, #00ff41, #00cc33);
+        color: #000;
+        border-color: #00ff41;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(45deg, #00cc33, #00ff41);
+        transform: translateY(-2px);
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.2em;
+        background: #00ff41;
+        animation: blink 1s infinite;
+        margin-left: 2px;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
         }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.05;
-            z-index: -1;
+        51%,
+        100% {
+          opacity: 0;
         }
-        
-        .terminal {
-            width: 700px;
-            max-width: 95vw;
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #00ff41;
-            border-radius: 12px;
-            box-shadow: 
-                0 0 30px #00ff41,
-                inset 0 0 30px rgba(0, 255, 65, 0.1);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
+      }
+
+      .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00ff41, transparent);
+        animation: scan 4s infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateY(-100px);
+          opacity: 0;
         }
-        
-        .terminal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(0, 255, 65, 0.03) 2px,
-                    rgba(0, 255, 65, 0.03) 4px
-                );
-            pointer-events: none;
+        10% {
+          opacity: 1;
         }
-        
-        .terminal-header {
-            background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
-            color: #000;
-            padding: 12px 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        90% {
+          opacity: 1;
         }
-        
-        .terminal-buttons {
-            display: flex;
-            gap: 6px;
+        100% {
+          transform: translateY(700px);
+          opacity: 0;
         }
-        
-        .btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
-        }
-        
-        .btn-close { background: #ff5555; }
-        .btn-minimize { background: #ffaa00; }
-        .btn-maximize { background: #00ff00; }
-        
-        .terminal-content {
-            padding: 40px;
-            position: relative;
-            text-align: center;
-        }
-        
-        .success-header {
-            margin-bottom: 30px;
-        }
-        
-        .success-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-        }
-        
-        .success-title {
-            font-size: 2em;
-            font-weight: 700;
-            color: #00ff41;
-            text-shadow: 0 0 20px #00ff41;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .success-subtitle {
-            color: #00ff41;
-            font-size: 1.1em;
-            opacity: 0.8;
-            margin-bottom: 25px;
-        }
-        
-        .team-info {
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid #00ff41;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            position: relative;
-        }
-        
-        .team-info::before {
-            content: "TEAM STATUS";
-            position: absolute;
-            top: -12px;
-            left: 15px;
-            background: #000;
-            color: #00ff41;
-            padding: 0 10px;
-            font-size: 0.8em;
-            font-weight: 600;
-        }
-        
-        .team-name {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-            color: #000;
-            padding: 10px 20px;
-            border-radius: 15px;
-            font-size: 1.5em;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-        
-        .completion-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-box {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00ff41;
-            border-radius: 6px;
-            padding: 15px;
-            text-align: center;
-        }
-        
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-        
-        .stat-value {
-            font-size: 1.3em;
-            font-weight: 600;
-            color: #ff6b6b;
-        }
-        
-        .completion-message {
-            background: rgba(0, 255, 65, 0.05);
-            border-left: 4px solid #00ff41;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: left;
-            font-size: 1.1em;
-            line-height: 1.5;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        
-        .btn-action {
-            background: transparent;
-            color: #00ff41;
-            border: 2px solid #00ff41;
-            padding: 12px 25px;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .btn-action:hover {
-            background: #00ff41;
-            color: #000;
-            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #00ff41, #00cc33);
-            color: #000;
-            border-color: #00ff41;
-        }
-        
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #00cc33, #00ff41);
-            transform: translateY(-2px);
-        }
-        
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background: #00ff41;
-            animation: blink 1s infinite;
-            margin-left: 2px;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00ff41, transparent);
-            animation: scan 4s infinite;
-        }
-        
-        @keyframes scan {
-            0% { transform: translateY(-100px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(700px); opacity: 0; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="matrix-bg"></div>
     <div class="scan-line"></div>
-    
+
     <div class="terminal">
-        <div class="terminal-header">
-            <div class="terminal-buttons">
-                <div class="btn btn-close"></div>
-                <div class="btn btn-minimize"></div>
-                <div class="btn btn-maximize"></div>
-            </div>
-            <span>root@ctf-system:~$ mission_status --complete</span>
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="btn btn-close"></div>
+          <div class="btn btn-minimize"></div>
+          <div class="btn btn-maximize"></div>
         </div>
-        
-        <div class="terminal-content">
-            <div class="success-header">
-                <div class="success-icon">✅</div>
-                <div class="success-title">Mission Complete<span class="cursor"></span></div>
-                <div class="success-subtitle">All challenges successfully solved</div>
-            </div>
-            
-            <div class="team-info">
-                <div class="team-name">Team {{ team }}</div>
-                <div>Status: CHALLENGES COMPLETED</div>
-            </div>
-            
-            <div class="completion-stats">
-                <div class="stat-box">
-                    <div class="stat-label">Completion Rate</div>
-                    <div class="stat-value">100%</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Security Level</div>
-                    <div class="stat-value">BREACHED</div>
-                </div>
-            </div>
-            
-            <div class="completion-message">
-                <strong>// SYSTEM MESSAGE //</strong><br>
-					感謝你參與本測試，你在本測試完成了所有關卡！
-            </div>
-            
+        <span>root@ctf-system:~$ mission_status --complete</span>
+      </div>
+
+      <div class="terminal-content">
+        <div class="success-header">
+          <div class="success-icon">✅</div>
+          <div class="success-title">
+            Mission Complete<span class="cursor"></span>
+          </div>
+          <div class="success-subtitle">All challenges successfully solved</div>
         </div>
+
+        <div class="team-info">
+          <div class="team-name">Team {{ team }}</div>
+          <div>Status: CHALLENGES COMPLETED</div>
+        </div>
+
+        <div class="completion-stats">
+          <div class="stat-box">
+            <div class="stat-label">Completion Rate</div>
+            <div class="stat-value">100%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Security Level</div>
+            <div class="stat-value">BREACHED</div>
+          </div>
+        </div>
+
+        <div class="completion-message">
+          <strong>// SYSTEM MESSAGE //</strong><br />
+          感謝你參與本測試，你在本測試完成了所有關卡！
+        </div>
+      </div>
     </div>
-    
+
     <script>
-        // 簡單矩陣雨效果
-        const canvas = document.createElement('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        document.querySelector('.matrix-bg').appendChild(canvas);
-        
-        const ctx = canvas.getContext('2d');
-        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-        const charArray = chars.split("");
-        
-        const fontSize = 12;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
+      // 簡單矩陣雨效果
+      const canvas = document.createElement("canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      document.querySelector(".matrix-bg").appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+      const chars =
+        "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+      const charArray = chars.split("");
+
+      const fontSize = 12;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+
+      for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+      }
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00ff41";
+        ctx.font = fontSize + "px Source Code Pro";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = charArray[Math.floor(Math.random() * charArray.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
         }
-        
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px Source Code Pro';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = charArray[Math.floor(Math.random() * charArray.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        
-        setInterval(draw, 60);
-        
-        // 簡單入場動畫
-        const terminal = document.querySelector('.terminal');
-        terminal.style.opacity = '0';
-        terminal.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            terminal.style.transition = 'all 0.8s ease-out';
-            terminal.style.opacity = '1';
-            terminal.style.transform = 'translateY(0)';
-        }, 100);
+      }
+
+      setInterval(draw, 60);
+
+      // 簡單入場動畫
+      const terminal = document.querySelector(".terminal");
+      terminal.style.opacity = "0";
+      terminal.style.transform = "translateY(20px)";
+
+      setTimeout(() => {
+        terminal.style.transition = "all 0.8s ease-out";
+        terminal.style.opacity = "1";
+        terminal.style.transform = "translateY(0)";
+      }, 100);
     </script>
-</body>
+  </body>
 </html>

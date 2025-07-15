@@ -1,584 +1,655 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>{{ info.title }}</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap');
-        
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: #00ff41;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            padding: 0;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
+      @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap");
+
+      body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #00ff41;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.1em;
+        padding: 0;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+      }
+
+      .matrix-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.05;
+        z-index: -1;
+      }
+
+      .terminal {
+        width: 900px;
+        max-width: 95vw;
+        background: rgba(0, 0, 0, 0.95);
+        border: 2px solid #00ff41;
+        border-radius: 12px;
+        box-shadow: 0 0 30px #00ff41, inset 0 0 30px rgba(0, 255, 65, 0.1);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .terminal::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 255, 65, 0.03) 2px,
+          rgba(0, 255, 65, 0.03) 4px
+        );
+        pointer-events: none;
+      }
+
+      .terminal-header {
+        background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
+        color: #000;
+        padding: 12px 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .terminal-buttons {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: none;
+      }
+
+      .btn-close {
+        background: #ff5555;
+      }
+      .btn-minimize {
+        background: #ffaa00;
+      }
+      .btn-maximize {
+        background: #00ff00;
+      }
+
+      .terminal-content {
+        padding: 30px;
+        position: relative;
+      }
+
+      .challenge-header {
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #00ff41;
+        padding-bottom: 20px;
+      }
+
+      .challenge-title {
+        font-size: 2em;
+        font-weight: 700;
+        color: #00ff41;
+        text-shadow: 0 0 20px #00ff41;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .challenge-level {
+        background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        color: #000;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 0.9em;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 15px;
+      }
+
+      .challenge-description {
+        background: rgba(0, 255, 65, 0.1);
+        border: 1px solid #00ff41;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        font-size: 1.1em;
+        line-height: 1.6;
+        position: relative;
+      }
+
+      .challenge-description::before {
+        content: "MISSION BRIEF";
+        position: absolute;
+        top: -12px;
+        left: 15px;
+        background: #000;
+        color: #00ff41;
+        padding: 0 10px;
+        font-size: 0.8em;
+        font-weight: 600;
+      }
+
+      .challenge-nav {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      .nav-btn {
+        background: linear-gradient(45deg, #ff0040, #cc0033);
+        color: #fff;
+        border: none;
+        padding: 15px 40px;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        display: inline-block;
+        border: 2px solid #ff0040;
+        box-shadow: 0 0 15px rgba(255, 0, 64, 0.3),
+          inset 0 0 15px rgba(255, 0, 64, 0.1);
+      }
+
+      .nav-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .nav-btn:hover::before {
+        left: 100%;
+      }
+
+      .nav-btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 0 30px rgba(255, 0, 64, 0.6),
+          0 10px 40px rgba(255, 0, 64, 0.4),
+          inset 0 0 20px rgba(255, 0, 64, 0.2);
+        background: linear-gradient(45deg, #cc0033, #ff0040);
+        border-color: #ff3366;
+        animation: pulse-red 1s infinite;
+      }
+
+      .nav-btn:active {
+        transform: translateY(-1px) scale(1.01);
+      }
+
+      .nav-btn::after {
+        content: "⚡";
+        margin-left: 10px;
+        font-size: 1.2em;
+        animation: flicker 2s infinite;
+      }
+
+      @keyframes pulse-red {
+        0%,
+        100% {
+          box-shadow: 0 0 30px rgba(255, 0, 64, 0.6),
+            0 10px 40px rgba(255, 0, 64, 0.4),
+            inset 0 0 20px rgba(255, 0, 64, 0.2);
         }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.05;
-            z-index: -1;
+        50% {
+          box-shadow: 0 0 40px rgba(255, 0, 64, 0.8),
+            0 10px 50px rgba(255, 0, 64, 0.6),
+            inset 0 0 30px rgba(255, 0, 64, 0.3);
         }
-        
-        .terminal {
-            width: 900px;
-            max-width: 95vw;
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #00ff41;
-            border-radius: 12px;
-            box-shadow: 
-                0 0 30px #00ff41,
-                inset 0 0 30px rgba(0, 255, 65, 0.1);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
+      }
+
+      @keyframes flicker {
+        0%,
+        100% {
+          opacity: 1;
         }
-        
-        .terminal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(0, 255, 65, 0.03) 2px,
-                    rgba(0, 255, 65, 0.03) 4px
-                );
-            pointer-events: none;
+        50% {
+          opacity: 0.7;
         }
-        
-        .terminal-header {
-            background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
-            color: #000;
-            padding: 12px 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        75% {
+          opacity: 1;
         }
-        
-        .terminal-buttons {
-            display: flex;
-            gap: 6px;
+        85% {
+          opacity: 0.8;
         }
-        
-        .btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
+      }
+
+      .error-message {
+        background: rgba(255, 107, 107, 0.2);
+        border: 1px solid #ff6b6b;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        color: #ff6b6b;
+        font-weight: 600;
+        text-align: center;
+        animation: shake 0.5s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
         }
-        
-        .btn-close { background: #ff5555; }
-        .btn-minimize { background: #ffaa00; }
-        .btn-maximize { background: #00ff00; }
-        
-        .terminal-content {
-            padding: 30px;
-            position: relative;
+        25% {
+          transform: translateX(-5px);
         }
-        
-        .challenge-header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #00ff41;
-            padding-bottom: 20px;
+        75% {
+          transform: translateX(5px);
         }
-        
-        .challenge-title {
-            font-size: 2em;
-            font-weight: 700;
-            color: #00ff41;
-            text-shadow: 0 0 20px #00ff41;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+      }
+
+      .input-section {
+        background: rgba(0, 0, 0, 0.7);
+        border: 2px solid #00ff41;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        position: relative;
+      }
+
+      .input-section::before {
+        content: "FLAG INPUT";
+        position: absolute;
+        top: -12px;
+        left: 15px;
+        background: #000;
+        color: #00ff41;
+        padding: 0 10px;
+        font-size: 0.8em;
+        font-weight: 600;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .input-prefix {
+        color: #00ff41;
+        font-weight: 600;
+        font-size: 1.1em;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid #00ff41;
+        color: #00ff41;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.1em;
+        padding: 12px;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      input[type="text"]:focus {
+        border-bottom-color: #ff6b6b;
+        box-shadow: 0 2px 15px rgba(255, 107, 107, 0.3);
+        text-shadow: 0 0 10px #00ff41;
+      }
+
+      .submit-btn {
+        background: linear-gradient(45deg, #00ff41, #00cc33);
+        color: #000;
+        border: none;
+        padding: 12px 30px;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .submit-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.4),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .submit-btn:hover::before {
+        left: 100%;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 65, 0.4);
+        background: linear-gradient(45deg, #00cc33, #00ff41);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.2em;
+        background: #00ff41;
+        animation: blink 1s infinite;
+        margin-left: 2px;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
         }
-        
-        .challenge-level {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 15px;
+        51%,
+        100% {
+          opacity: 0;
         }
-        
-        .challenge-description {
-            background: rgba(0, 255, 65, 0.1);
-            border: 1px solid #00ff41;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-            font-size: 1.1em;
-            line-height: 1.6;
-            position: relative;
+      }
+
+      .hint-section {
+        background: rgba(255, 191, 0, 0.1);
+        border: 1px solid #ffbf00;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 20px;
+        color: #ffbf00;
+        font-size: 0.9em;
+      }
+
+      .hint-section::before {
+        content: "💡 HINT";
+        font-weight: 600;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: rgba(0, 255, 65, 0.2);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 20px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ff41, #00cc33);
+        border-radius: 3px;
+        width: 0%;
+        animation: progress-grow 2s ease-in-out infinite;
+      }
+
+      @keyframes progress-grow {
+        0%,
+        100% {
+          width: 20%;
         }
-        
-        .challenge-description::before {
-            content: "MISSION BRIEF";
-            position: absolute;
-            top: -12px;
-            left: 15px;
-            background: #000;
-            color: #00ff41;
-            padding: 0 10px;
-            font-size: 0.8em;
-            font-weight: 600;
+        50% {
+          width: 80%;
         }
-        
-        .challenge-nav {
-            text-align: center;
-            margin-bottom: 25px;
+      }
+
+      .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00ff41, transparent);
+        animation: scan 4s infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateY(-100px);
+          opacity: 0;
         }
-        
-        .nav-btn {
-            background: linear-gradient(45deg, #ff0040, #cc0033);
-            color: #fff;
-            border: none;
-            padding: 15px 40px;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            display: inline-block;
-            border: 2px solid #ff0040;
-            box-shadow: 
-                0 0 15px rgba(255, 0, 64, 0.3),
-                inset 0 0 15px rgba(255, 0, 64, 0.1);
+        10% {
+          opacity: 1;
         }
-        
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.5s ease;
+        90% {
+          opacity: 1;
         }
-        
-        .nav-btn:hover::before {
-            left: 100%;
+        100% {
+          transform: translateY(800px);
+          opacity: 0;
         }
-        
-        .nav-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 
-                0 0 30px rgba(255, 0, 64, 0.6),
-                0 10px 40px rgba(255, 0, 64, 0.4),
-                inset 0 0 20px rgba(255, 0, 64, 0.2);
-            background: linear-gradient(45deg, #cc0033, #ff0040);
-            border-color: #ff3366;
-            animation: pulse-red 1s infinite;
+      }
+
+      .glitch-text {
+        animation: glitch-text 2s infinite;
+      }
+
+      @keyframes glitch-text {
+        0%,
+        100% {
+          transform: translate(0);
         }
-        
-        .nav-btn:active {
-            transform: translateY(-1px) scale(1.01);
+        10% {
+          transform: translate(-1px, 1px);
         }
-        
-        .nav-btn::after {
-            content: '⚡';
-            margin-left: 10px;
-            font-size: 1.2em;
-            animation: flicker 2s infinite;
+        20% {
+          transform: translate(1px, -1px);
         }
-        
-        @keyframes pulse-red {
-            0%, 100% { 
-                box-shadow: 
-                    0 0 30px rgba(255, 0, 64, 0.6),
-                    0 10px 40px rgba(255, 0, 64, 0.4),
-                    inset 0 0 20px rgba(255, 0, 64, 0.2);
-            }
-            50% { 
-                box-shadow: 
-                    0 0 40px rgba(255, 0, 64, 0.8),
-                    0 10px 50px rgba(255, 0, 64, 0.6),
-                    inset 0 0 30px rgba(255, 0, 64, 0.3);
-            }
+        30% {
+          transform: translate(-1px, -1px);
         }
-        
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-            75% { opacity: 1; }
-            85% { opacity: 0.8; }
+        40% {
+          transform: translate(1px, 1px);
         }
-        
-        .error-message {
-            background: rgba(255, 107, 107, 0.2);
-            border: 1px solid #ff6b6b;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #ff6b6b;
-            font-weight: 600;
-            text-align: center;
-            animation: shake 0.5s ease-in-out;
+        50% {
+          transform: translate(-1px, 1px);
         }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        60% {
+          transform: translate(1px, -1px);
         }
-        
-        .input-section {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #00ff41;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 20px;
-            position: relative;
+        70% {
+          transform: translate(-1px, -1px);
         }
-        
-        .input-section::before {
-            content: "FLAG INPUT";
-            position: absolute;
-            top: -12px;
-            left: 15px;
-            background: #000;
-            color: #00ff41;
-            padding: 0 10px;
-            font-size: 0.8em;
-            font-weight: 600;
+        80% {
+          transform: translate(1px, 1px);
         }
-        
-        .input-group {
-            display: flex;
-            gap: 15px;
-            align-items: center;
+        90% {
+          transform: translate(-1px, 1px);
         }
-        
-        .input-prefix {
-            color: #00ff41;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-        
-        input[type="text"] {
-            flex: 1;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #00ff41;
-            color: #00ff41;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            padding: 12px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        
-        input[type="text"]:focus {
-            border-bottom-color: #ff6b6b;
-            box-shadow: 0 2px 15px rgba(255, 107, 107, 0.3);
-            text-shadow: 0 0 10px #00ff41;
-        }
-        
-        .submit-btn {
-            background: linear-gradient(45deg, #00ff41, #00cc33);
-            color: #000;
-            border: none;
-            padding: 12px 30px;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .submit-btn:hover::before {
-            left: 100%;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 255, 65, 0.4);
-            background: linear-gradient(45deg, #00cc33, #00ff41);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 1.2em;
-            background: #00ff41;
-            animation: blink 1s infinite;
-            margin-left: 2px;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        
-        .hint-section {
-            background: rgba(255, 191, 0, 0.1);
-            border: 1px solid #ffbf00;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            color: #ffbf00;
-            font-size: 0.9em;
-        }
-        
-        .hint-section::before {
-            content: "💡 HINT";
-            font-weight: 600;
-            display: block;
-            margin-bottom: 8px;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: rgba(0, 255, 65, 0.2);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff41, #00cc33);
-            border-radius: 3px;
-            width: 0%;
-            animation: progress-grow 2s ease-in-out infinite;
-        }
-        
-        @keyframes progress-grow {
-            0%, 100% { width: 20%; }
-            50% { width: 80%; }
-        }
-        
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00ff41, transparent);
-            animation: scan 4s infinite;
-        }
-        
-        @keyframes scan {
-            0% { transform: translateY(-100px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(800px); opacity: 0; }
-        }
-        
-        .glitch-text {
-            animation: glitch-text 2s infinite;
-        }
-        
-        @keyframes glitch-text {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-1px, 1px); }
-            20% { transform: translate(1px, -1px); }
-            30% { transform: translate(-1px, -1px); }
-            40% { transform: translate(1px, 1px); }
-            50% { transform: translate(-1px, 1px); }
-            60% { transform: translate(1px, -1px); }
-            70% { transform: translate(-1px, -1px); }
-            80% { transform: translate(1px, 1px); }
-            90% { transform: translate(-1px, 1px); }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="matrix-bg"></div>
     <div class="scan-line"></div>
-    
+
     <div class="terminal">
-        <div class="terminal-header">
-            <div class="terminal-buttons">
-                <div class="btn btn-close"></div>
-                <div class="btn btn-minimize"></div>
-                <div class="btn btn-maximize"></div>
-            </div>
-            <span>root@ctf-challenge:~$ ./challenge_{{ level }}</span>
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="btn btn-close"></div>
+          <div class="btn btn-minimize"></div>
+          <div class="btn btn-maximize"></div>
         </div>
-        
-        <div class="terminal-content">
-            <div class="challenge-header">
-                <div class="challenge-title glitch-text">{{ info.title }}<span class="cursor"></span></div>
-                <div class="challenge-level">Level {{ level }}</div>
-            </div>
-            
-            <div class="challenge-description">
-                {{ info.description }}
-            </div>
-            
-            <div class="challenge-nav">
-                <a href="{{ info.link }}" class="nav-btn">進入測試</a>
-            </div>
-			
-            
-            {% if error %}
-            <div class="error-message">
-                ❌ {{ error }}
-            </div>
-            {% endif %}
-            
-            <div class="input-section">
-                <form method="post" action="/submit/{{ level }}">
-                    <div class="input-group">
-                        <span class="input-prefix">FLAG:</span>
-                        <input type="text" name="flag" placeholder="SITCON{...}" required>
-                        <button type="submit" class="submit-btn">SUBMIT</button>
-                    </div>
-                </form>
-            </div>
-            
-            <div class="hint-section">
-                {{ info.hint }}
-            </div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
+        <span>root@ctf-challenge:~$ ./challenge_{{ level }}</span>
+      </div>
+
+      <div class="terminal-content">
+        <div class="challenge-header">
+          <div class="challenge-title glitch-text">
+            {{ info.title }}<span class="cursor"></span>
+          </div>
+          <div class="challenge-level">Level {{ level }}</div>
         </div>
+
+        <div class="challenge-description">{{ info.description }}</div>
+
+        <div class="challenge-nav">
+          <a href="{{ info.link }}" class="nav-btn">進入測試</a>
+        </div>
+
+        {% if error %}
+        <div class="error-message">❌ {{ error }}</div>
+        {% endif %}
+
+        <div class="input-section">
+          <form method="post" action="/submit/{{ level }}">
+            <div class="input-group">
+              <span class="input-prefix">FLAG:</span>
+              <input
+                type="text"
+                name="flag"
+                placeholder="SITCON{...}"
+                required
+              />
+              <button type="submit" class="submit-btn">SUBMIT</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="hint-section">{{ info.hint }}</div>
+
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
     </div>
-    
+
     <script>
-        // 矩陣雨效果
-        const canvas = document.createElement('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        document.querySelector('.matrix-bg').appendChild(canvas);
-        
-        const ctx = canvas.getContext('2d');
-        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-        const charArray = chars.split("");
-        
-        const fontSize = 12;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
+      // 矩陣雨效果
+      const canvas = document.createElement("canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      document.querySelector(".matrix-bg").appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+      const chars =
+        "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+      const charArray = chars.split("");
+
+      const fontSize = 12;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+
+      for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+      }
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00ff41";
+        ctx.font = fontSize + "px Source Code Pro";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = charArray[Math.floor(Math.random() * charArray.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
         }
-        
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px Source Code Pro';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = charArray[Math.floor(Math.random() * charArray.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
+      }
+
+      setInterval(draw, 60);
+
+      // 輸入框特效
+      const input = document.querySelector('input[type="text"]');
+      let isTyping = false;
+
+      input.addEventListener("input", () => {
+        if (!isTyping) {
+          isTyping = true;
+          input.style.animation = "none";
+          setTimeout(() => {
+            input.style.animation = "";
+            isTyping = false;
+          }, 100);
         }
-        
-        setInterval(draw, 60);
-        
-        // 輸入框特效
-        const input = document.querySelector('input[type="text"]');
-        let isTyping = false;
-        
-        input.addEventListener('input', () => {
-            if (!isTyping) {
-                isTyping = true;
-                input.style.animation = 'none';
-                setTimeout(() => {
-                    input.style.animation = '';
-                    isTyping = false;
-                }, 100);
-            }
-        });
-        
-        // 焦點效果
-        input.addEventListener('focus', () => {
-            input.style.textShadow = '0 0 15px #00ff41';
-            input.parentElement.style.boxShadow = '0 0 20px rgba(0, 255, 65, 0.3)';
-        });
-        
-        input.addEventListener('blur', () => {
-            input.style.textShadow = 'none';
-            input.parentElement.style.boxShadow = 'none';
-        });
-        
-        // 動態載入效果
-        const elements = document.querySelectorAll('.challenge-description, .challenge-nav, .input-section, .hint-section');
-        elements.forEach((element, index) => {
-            element.style.opacity = '0';
-            element.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                element.style.transition = 'all 0.5s ease';
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }, index * 300);
-        });
-        
-        // 提交按鈕音效模擬
-        const submitBtn = document.querySelector('.submit-btn');
-        submitBtn.addEventListener('click', () => {
-            submitBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                submitBtn.style.transform = '';
-            }, 100);
-        });
-        
-        // 導航按鈕特效
-        const navBtn = document.querySelector('.nav-btn');
-        navBtn.addEventListener('click', () => {
-            navBtn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                navBtn.style.transform = '';
-            }, 100);
-        });
+      });
+
+      // 焦點效果
+      input.addEventListener("focus", () => {
+        input.style.textShadow = "0 0 15px #00ff41";
+        input.parentElement.style.boxShadow = "0 0 20px rgba(0, 255, 65, 0.3)";
+      });
+
+      input.addEventListener("blur", () => {
+        input.style.textShadow = "none";
+        input.parentElement.style.boxShadow = "none";
+      });
+
+      // 動態載入效果
+      const elements = document.querySelectorAll(
+        ".challenge-description, .challenge-nav, .input-section, .hint-section"
+      );
+      elements.forEach((element, index) => {
+        element.style.opacity = "0";
+        element.style.transform = "translateY(20px)";
+        setTimeout(() => {
+          element.style.transition = "all 0.5s ease";
+          element.style.opacity = "1";
+          element.style.transform = "translateY(0)";
+        }, index * 300);
+      });
+
+      // 提交按鈕音效模擬
+      const submitBtn = document.querySelector(".submit-btn");
+      submitBtn.addEventListener("click", () => {
+        submitBtn.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          submitBtn.style.transform = "";
+        }, 100);
+      });
+
+      // 導航按鈕特效
+      const navBtn = document.querySelector(".nav-btn");
+      navBtn.addEventListener("click", () => {
+        navBtn.style.transform = "scale(0.95)";
+        setTimeout(() => {
+          navBtn.style.transform = "";
+        }, 100);
+      });
     </script>
-</body>
+  </body>
 </html>

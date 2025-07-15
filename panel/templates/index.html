@@ -1,396 +1,422 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>CTF Terminal Access</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap');
-        
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: #00ff41;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.1em;
-            padding: 20px 0;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+      @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap");
+
+      body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #00ff41;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.1em;
+        padding: 20px 0;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .matrix-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.1;
+        z-index: -1;
+      }
+
+      .terminal {
+        width: 900px;
+        max-width: 95vw;
+        background: rgba(0, 0, 0, 0.95);
+        border: 2px solid #00ff41;
+        border-radius: 12px;
+        box-shadow: 0 0 20px #00ff41, inset 0 0 20px rgba(0, 255, 65, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .terminal::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 255, 65, 0.03) 2px,
+          rgba(0, 255, 65, 0.03) 4px
+        );
+        pointer-events: none;
+      }
+
+      .terminal-header {
+        background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
+        color: #000;
+        padding: 12px 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .terminal-buttons {
+        display: flex;
+        gap: 6px;
+      }
+
+      .btn {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: none;
+      }
+
+      .btn-close {
+        background: #ff5555;
+      }
+      .btn-minimize {
+        background: #ffaa00;
+      }
+      .btn-maximize {
+        background: #00ff00;
+      }
+
+      .terminal-content {
+        padding: 30px;
+        position: relative;
+      }
+
+      .ascii-art {
+        font-family: "Source Code Pro", monospace;
+        color: #00ff41;
+        font-size: 0.9em;
+        margin-bottom: 30px;
+        text-shadow: 0 0 10px #00ff41;
+        white-space: pre;
+        overflow-x: auto;
+        display: block;
+        text-align: left;
+        line-height: 1.1;
+        letter-spacing: 0;
+        font-weight: 400;
+        max-width: 100%;
+      }
+
+      .ascii-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .story-section {
+        margin-bottom: 30px;
+      }
+
+      .story-content {
+        margin: 25px 0;
+        padding: 20px;
+        background: rgba(0, 255, 65, 0.05);
+        border-left: 3px solid #00ff41;
+        border-radius: 5px;
+      }
+
+      .story-line {
+        margin: 10px 0;
+        font-size: 1em;
+        color: #00ff41;
+      }
+
+      .story-prefix {
+        color: #ff6b6b;
+        font-weight: 600;
+        margin-right: 8px;
+      }
+
+      .story-text {
+        margin: 20px 0;
+        line-height: 1.6;
+        color: #cccccc;
+        font-size: 0.95em;
+        padding: 15px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+      }
+
+      .highlight {
+        color: #00ff41;
+        font-weight: 600;
+        text-shadow: 0 0 5px #00ff41;
+      }
+
+      .story-text br {
+        margin-bottom: 5px;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        align-items: center;
+      }
+
+      .input-prefix {
+        color: #00ff41;
+        font-weight: 600;
+      }
+
+      input[type="number"] {
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid #00ff41;
+        color: #00ff41;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1.2em;
+        padding: 8px;
+        width: 100px;
+        text-align: center;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      input[type="number"]:focus {
+        border-bottom-color: #ff6b6b;
+        box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+      }
+
+      .submit-btn {
+        background: linear-gradient(45deg, #00ff41, #00cc33);
+        color: #000;
+        border: none;
+        padding: 12px 24px;
+        font-family: "Source Code Pro", monospace;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 255, 65, 0.4);
+        background: linear-gradient(45deg, #00cc33, #00ff41);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .warning-text {
+        color: #ff6b6b;
+        font-size: 0.9em;
+        margin-top: 15px;
+        text-align: center;
+        opacity: 0.8;
+      }
+
+      .scan-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00ff41, transparent);
+        animation: scan 3s infinite;
+      }
+
+      @keyframes scan {
+        0% {
+          transform: translateY(-100px);
+          opacity: 0;
         }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.1;
-            z-index: -1;
+        10% {
+          opacity: 1;
         }
-        
-        .terminal {
-            width: 900px;
-            max-width: 95vw;
-            background: rgba(0, 0, 0, 0.95);
-            border: 2px solid #00ff41;
-            border-radius: 12px;
-            box-shadow: 
-                0 0 20px #00ff41,
-                inset 0 0 20px rgba(0, 255, 65, 0.1);
-            position: relative;
-            overflow: hidden;
+        90% {
+          opacity: 1;
         }
-        
-        .terminal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 2px,
-                    rgba(0, 255, 65, 0.03) 2px,
-                    rgba(0, 255, 65, 0.03) 4px
-                );
-            pointer-events: none;
+        100% {
+          transform: translateY(600px);
+          opacity: 0;
         }
-        
-        .terminal-header {
-            background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
-            color: #000;
-            padding: 12px 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .terminal-buttons {
-            display: flex;
-            gap: 6px;
-        }
-        
-        .btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
-        }
-        
-        .btn-close { background: #ff5555; }
-        .btn-minimize { background: #ffaa00; }
-        .btn-maximize { background: #00ff00; }
-        
-        .terminal-content {
-            padding: 30px;
-            position: relative;
-        }
-        
+      }
+
+      @media (max-width: 768px) {
         .ascii-art {
-            font-family: 'Source Code Pro', monospace;
-            color: #00ff41;
-            font-size: 0.9em;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px #00ff41;
-            white-space: pre;
-            overflow-x: auto;
-            display: block;
-            text-align: left;
-            line-height: 1.1;
-            letter-spacing: 0;
-            font-weight: 400;
-            max-width: 100%;
+          font-size: 0.6em;
         }
-        
-        .ascii-container {
-            display: flex;
-            justify-content: center;
-            width: 100%;
+        .terminal {
+          width: 95vw;
         }
-        
-        .story-section {
-            margin-bottom: 30px;
-        }
-        
-        .story-content {
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(0, 255, 65, 0.05);
-            border-left: 3px solid #00ff41;
-            border-radius: 5px;
-        }
-        
-        .story-line {
-            margin: 10px 0;
-            font-size: 1em;
-            color: #00ff41;
-        }
-        
-        .story-prefix {
-            color: #ff6b6b;
-            font-weight: 600;
-            margin-right: 8px;
-        }
-        
-        .story-text {
-            margin: 20px 0;
-            line-height: 1.6;
-            color: #cccccc;
-            font-size: 0.95em;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-        }
-        
-        .highlight {
-            color: #00ff41;
-            font-weight: 600;
-            text-shadow: 0 0 5px #00ff41;
-        }
-        
-        .story-text br {
-            margin-bottom: 5px;
-        }
-        
-        .input-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            align-items: center;
-        }
-        
-        .input-prefix {
-            color: #00ff41;
-            font-weight: 600;
-        }
-        
-        input[type="number"] {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid #00ff41;
-            color: #00ff41;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1.2em;
-            padding: 8px;
-            width: 100px;
-            text-align: center;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        
-        input[type="number"]:focus {
-            border-bottom-color: #ff6b6b;
-            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
-        }
-        
-        .submit-btn {
-            background: linear-gradient(45deg, #00ff41, #00cc33);
-            color: #000;
-            border: none;
-            padding: 12px 24px;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 255, 65, 0.4);
-            background: linear-gradient(45deg, #00cc33, #00ff41);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-        
-        .warning-text {
-            color: #ff6b6b;
-            font-size: 0.9em;
-            margin-top: 15px;
-            text-align: center;
-            opacity: 0.8;
-        }
-        
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00ff41, transparent);
-            animation: scan 3s infinite;
-        }
-        
-        @keyframes scan {
-            0% { transform: translateY(-100px); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(600px); opacity: 0; }
-        }
-        
-        @media (max-width: 768px) {
-            .ascii-art {
-                font-size: 0.6em;
-            }
-            .terminal {
-                width: 95vw;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="matrix-bg"></div>
     <div class="scan-line"></div>
-    
+
     <div class="terminal">
-        <div class="terminal-header">
-            <div class="terminal-buttons">
-                <div class="btn btn-close"></div>
-                <div class="btn btn-minimize"></div>
-                <div class="btn btn-maximize"></div>
-            </div>
-            <span>root@ctf-server:~$</span>
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="btn btn-close"></div>
+          <div class="btn btn-minimize"></div>
+          <div class="btn btn-maximize"></div>
         </div>
-        
-        <div class="terminal-content">
-            <div class="ascii-container">
-                <div class="ascii-art">███████╗██╗████████╗ ██████╗ ██████╗ ███╗   ██╗     ██████╗ █████╗ ███╗   ███╗██████╗ 
-██╔════╝██║╚══██╔══╝██╔════╝██╔═══██╗████╗  ██║    ██╔════╝██╔══██╗████╗ ████║██╔══██╗
-███████╗██║   ██║   ██║     ██║   ██║██╔██╗ ██║    ██║     ███████║██╔████╔██║██████╔╝
-╚════██║██║   ██║   ██║     ██║   ██║██║╚██╗██║    ██║     ██╔══██║██║╚██╔╝██║██╔═══╝ 
-███████║██║   ██║   ╚██████╗╚██████╔╝██║ ╚████║    ╚██████╗██║  ██║██║ ╚═╝ ██║██║     
-╚══════╝╚═╝   ╚═╝    ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝     ╚═════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝     </div>
-            </div>
-            
-            <div class="story-section">
-                <div class="story-content">
-                    <div class="story-line">
-                        <span class="story-prefix">[DATA]</span> 2025年7月9日 - 載入成功
-                    </div>
-                    
-                    <div class="story-text">
-					你好測試者，歡迎來到 SITCON OS 滲透測試。<br>
-					我們開發了一款整合 AI 助理的 Linux 發行版：<code>AiHelp</code>。<br>
-					你的任務很簡單：<br>
-					想辦法讓 AiHelp 洩露 <code>/root/flag_????????.txt</code> 的內容。<br>
-					請注意，它被設計為「絕不會」透露敏感資訊……理論上。<br><br>
-                    </div>
-                    
-                    <div class="story-line">
-                        <span class="story-prefix">[SYSTEM]</span> 選擇你的小隊並開始任務
-                    </div>
-                </div>
-            </div>
-            
-            <form method="post" action="/set_team">
-                <div class="input-group">
-                    <span class="input-prefix">TEAM_ID:</span>
-                    <input type="number" name="team" min="1" max="9" required placeholder="?">
-                    <button type="submit" class="submit-btn">開始任務</button>
-                </div>
-            </form>
-            
-            <div class="warning-text">
-                ⚠️ 系統級距不穩定，可能會因為 AiHelp 的關係影響檔案位置 ⚠️
-            </div>
+        <span>root@ctf-server:~$</span>
+      </div>
+
+      <div class="terminal-content">
+        <div class="ascii-container">
+          <div class="ascii-art">
+            ███████╗██╗████████╗ ██████╗ ██████╗ ███╗ ██╗ ██████╗ █████╗ ███╗
+            ███╗██████╗ ██╔════╝██║╚══██╔══╝██╔════╝██╔═══██╗████╗ ██║
+            ██╔════╝██╔══██╗████╗ ████║██╔══██╗ ███████╗██║ ██║ ██║ ██║
+            ██║██╔██╗ ██║ ██║ ███████║██╔████╔██║██████╔╝ ╚════██║██║ ██║ ██║
+            ██║ ██║██║╚██╗██║ ██║ ██╔══██║██║╚██╔╝██║██╔═══╝ ███████║██║ ██║
+            ╚██████╗╚██████╔╝██║ ╚████║ ╚██████╗██║ ██║██║ ╚═╝ ██║██║
+            ╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═════╝ ╚═╝ ╚═══╝ ╚═════╝╚═╝ ╚═╝╚═╝ ╚═╝╚═╝
+          </div>
         </div>
+
+        <div class="story-section">
+          <div class="story-content">
+            <div class="story-line">
+              <span class="story-prefix">[DATA]</span> 2025年7月9日 - 載入成功
+            </div>
+
+            <div class="story-text">
+              你好測試者，歡迎來到 SITCON OS 滲透測試。<br />
+              我們開發了一款整合 AI 助理的 Linux
+              發行版：<code>AiHelp</code>。<br />
+              你的任務很簡單：<br />
+              想辦法讓 AiHelp 洩露
+              <code>/root/flag_????????.txt</code> 的內容。<br />
+              請注意，它被設計為「絕不會」透露敏感資訊……理論上。<br /><br />
+            </div>
+
+            <div class="story-line">
+              <span class="story-prefix">[SYSTEM]</span> 選擇你的小隊並開始任務
+            </div>
+          </div>
+        </div>
+
+        <form method="post" action="/set_team">
+          <div class="input-group">
+            <span class="input-prefix">TEAM_ID:</span>
+            <input
+              type="number"
+              name="team"
+              min="1"
+              max="9"
+              required
+              placeholder="?"
+            />
+            <button type="submit" class="submit-btn">開始任務</button>
+          </div>
+        </form>
+
+        <div class="warning-text">
+          ⚠️ 系統級距不穩定，可能會因為 AiHelp 的關係影響檔案位置 ⚠️
+        </div>
+      </div>
     </div>
-    
+
     <script>
-        // 矩陣雨效果
-        const canvas = document.createElement('canvas');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        document.querySelector('.matrix-bg').appendChild(canvas);
-        
-        const ctx = canvas.getContext('2d');
-        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
-        const charArray = chars.split("");
-        
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = [];
-        
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
+      // 矩陣雨效果
+      const canvas = document.createElement("canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      document.querySelector(".matrix-bg").appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+      const chars =
+        "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+      const charArray = chars.split("");
+
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+
+      for (let i = 0; i < columns; i++) {
+        drops[i] = 1;
+      }
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00ff41";
+        ctx.font = fontSize + "px Source Code Pro";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = charArray[Math.floor(Math.random() * charArray.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
         }
-        
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00ff41';
-            ctx.font = fontSize + 'px Source Code Pro';
-            
-            for (let i = 0; i < drops.length; i++) {
-                const text = charArray[Math.floor(Math.random() * charArray.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        
-        setInterval(draw, 50);
-        
-        // 故事動畫效果
-        const storyLines = document.querySelectorAll('.story-line');
-        const storyText = document.querySelector('.story-text');
-        
-        // 初始化故事元素為隱藏
-        [...storyLines, storyText].forEach(element => {
-            if (element) element.style.opacity = '0';
-        });
-        
-        // 按順序顯示故事元素
-        let delay = 500;
-        
-        storyLines.forEach((line, index) => {
-            setTimeout(() => {
-                line.style.opacity = '1';
-                line.style.animation = 'fadeIn 0.3s ease-in';
-            }, delay);
-            delay += 400;
-        });
-        
-        // 故事內容
+      }
+
+      setInterval(draw, 50);
+
+      // 故事動畫效果
+      const storyLines = document.querySelectorAll(".story-line");
+      const storyText = document.querySelector(".story-text");
+
+      // 初始化故事元素為隱藏
+      [...storyLines, storyText].forEach((element) => {
+        if (element) element.style.opacity = "0";
+      });
+
+      // 按順序顯示故事元素
+      let delay = 500;
+
+      storyLines.forEach((line, index) => {
         setTimeout(() => {
-            if (storyText) {
-                storyText.style.opacity = '1';
-                storyText.style.animation = 'fadeIn 0.8s ease-in';
-            }
+          line.style.opacity = "1";
+          line.style.animation = "fadeIn 0.3s ease-in";
         }, delay);
-        
-        // 添加fadeIn動畫
-        const style = document.createElement('style');
-        style.textContent = `
+        delay += 400;
+      });
+
+      // 故事內容
+      setTimeout(() => {
+        if (storyText) {
+          storyText.style.opacity = "1";
+          storyText.style.animation = "fadeIn 0.8s ease-in";
+        }
+      }, delay);
+
+      // 添加fadeIn動畫
+      const style = document.createElement("style");
+      style.textContent = `
             @keyframes fadeIn {
                 from { opacity: 0; transform: translateY(10px); }
                 to { opacity: 1; transform: translateY(0); }
             }
         `;
-        document.head.appendChild(style);
-        
-        // 輸入框焦點效果
-        const input = document.querySelector('input[type="number"]');
-        input.addEventListener('focus', () => {
-            input.style.textShadow = '0 0 10px #00ff41';
-        });
-        
-        input.addEventListener('blur', () => {
-            input.style.textShadow = 'none';
-        });
+      document.head.appendChild(style);
+
+      // 輸入框焦點效果
+      const input = document.querySelector('input[type="number"]');
+      input.addEventListener("focus", () => {
+        input.style.textShadow = "0 0 10px #00ff41";
+      });
+
+      input.addEventListener("blur", () => {
+        input.style.textShadow = "none";
+      });
     </script>
-</body>
+  </body>
 </html>

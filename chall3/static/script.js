@@ -5,7 +5,7 @@ class TeamInputHandler {
     this.terminalContainer = document.getElementById("terminal-container");
     this.teamNumberInput = document.getElementById("team-number");
     this.teamSubmitButton = document.getElementById("team-submit");
-    
+
     this.setupEventListeners();
     this.teamNumberInput.focus();
   }
@@ -26,7 +26,7 @@ class TeamInputHandler {
 
   handleTeamSubmit() {
     const teamNumber = this.teamNumberInput.value.trim();
-    
+
     if (!teamNumber) {
       this.showError("請輸入隊伍編號");
       return;
@@ -34,28 +34,33 @@ class TeamInputHandler {
 
     // Validate team number - must be a number between 1-10
     const teamNum = parseInt(teamNumber);
-    if (isNaN(teamNum) || !Number.isInteger(teamNum) || teamNum < 1 || teamNum > 10) {
+    if (
+      isNaN(teamNum) ||
+      !Number.isInteger(teamNum) ||
+      teamNum < 1 ||
+      teamNum > 10
+    ) {
       this.showError("隊伍編號必須是 1-10 之間的數字");
       return;
     }
 
     // Store team number (you can send this to backend if needed)
-    sessionStorage.setItem('teamNumber', teamNumber);
-    
+    sessionStorage.setItem("teamNumber", teamNumber);
+
     // Hide team input screen and show terminal
     this.showTerminal();
   }
 
   showError(message) {
     // Remove existing error message
-    const existingError = document.querySelector('.team-error');
+    const existingError = document.querySelector(".team-error");
     if (existingError) {
       existingError.remove();
     }
 
     // Add new error message
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'team-error';
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "team-error";
     errorDiv.textContent = message;
     this.teamNumberInput.parentNode.appendChild(errorDiv);
 
@@ -68,9 +73,9 @@ class TeamInputHandler {
   }
 
   showTerminal() {
-    this.teamInputScreen.style.display = 'none';
-    this.terminalContainer.style.display = 'flex';
-    
+    this.teamInputScreen.style.display = "none";
+    this.terminalContainer.style.display = "flex";
+
     // Initialize terminal after showing it
     new Terminal();
   }
@@ -85,9 +90,9 @@ class Terminal {
     this.sessionId = this.getOrCreateSessionId();
 
     this.setupEventListeners();
-    
+
     // Show welcome message with team number
-    const teamNumber = sessionStorage.getItem('teamNumber');
+    const teamNumber = sessionStorage.getItem("teamNumber");
     this.addSystemMessage(
       `歡迎 Team ${teamNumber}! Ubuntu Terminal Simulator ready. Type "help" for available commands.`
     );
@@ -95,7 +100,7 @@ class Terminal {
 
   getOrCreateSessionId() {
     // 使用 team number 作為 session ID
-    return sessionStorage.getItem('teamNumber') || 'unknown';
+    return sessionStorage.getItem("teamNumber") || "unknown";
   }
 
   setupEventListeners() {
@@ -172,7 +177,7 @@ class Terminal {
       },
       body: JSON.stringify({
         message: message,
-        session_id: this.sessionId
+        session_id: this.sessionId,
       }),
     });
 
