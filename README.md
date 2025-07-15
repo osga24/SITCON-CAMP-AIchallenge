@@ -48,7 +48,6 @@ DISCORD_WEBHOOK_URL=              # Discord webhook for notifications (optional)
 ```env
 # Required
 MONGODB=mongodb://localhost:27017 # MongoDB connection string (should match chall)
-API_KEY=sk-xxxxxxx                # (If needed for OpenAI features)
 ```
 
 - See `.env.example` for a template if provided.
@@ -152,24 +151,6 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## Example Deployment
-
-1. Set up MongoDB and create a `.env` file in `chall/` and `history/` with your `MONGODB` and `API_KEY` connection string. (See `.env.example`)
-2. Start the challenge server:
-   ```bash
-   uv run main.py --schema chall1 --promptfile prompts/basic_prompt_1.txt --port 30007
-   ```
-3. Start the participant panel (set up `.env` as needed):
-   ```bash
-   uv run main.py
-   ```
-4. Start the history viewer:
-   ```bash
-   pnpm run dev
-   ```
 
 ---
 
