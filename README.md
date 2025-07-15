@@ -18,6 +18,44 @@ This project is a multi-component platform for running and managing an AI-powere
 
 ---
 
+## Configuration
+
+Each component requires its own environment variables. You should create a `.env` file in each subdirectory as shown below.
+
+- **Tip:** You can also place a single `/.env` in the project root to share `API_KEY` and `MONGODB` across all components. If you do this, remember to run your app from the root directory (e.g., `uv run ./chall/main.py`).
+
+### chall/.env
+```env
+# Required
+API_KEY=sk-xxxxxxx                # Your OpenAI API key
+MONGODB=mongodb://localhost:27017 # MongoDB connection string
+```
+
+### panel/.env
+```env
+# Required
+SECRET_KEY=your_random_secret_key # Used for session management
+ADMIN_PASSWORD=your_admin_pw      # Password for admin login (admin endpoints only)
+
+# Optional
+DB_PATH=database.db               # Path to SQLite database (default: database.db)
+DISCORD_WEBHOOK_URL=              # Discord webhook for notifications (optional)
+```
+
+- You can also edit `data.json` in the `panel/` directory to customize challenge information (titles, hints, flags, etc.) without modifying code.
+
+### history/.env
+```env
+# Required
+MONGODB=mongodb://localhost:27017 # MongoDB connection string (should match chall)
+API_KEY=sk-xxxxxxx                # (If needed for OpenAI features)
+```
+
+- See `.env.example` for a template if provided.
+- **Never commit secrets or API keys to version control.**
+
+---
+
 ## 1. Challenge Server (`chall/`)
 
 ### Features
@@ -51,7 +89,7 @@ uv run main.py --schema chall1 --promptfile prompts/basic_prompt_1.txt --port 30
 
 - `--schema`: MongoDB collection name (must be `chall1`, `chall2`, or `chall3` for the history panel to show)
 - `--promptfile`: Prompt file location (default: prompts/basic_prompt_1.txt)
-- `--port`: Port to run the server on (default: 30009)
+- `--port`: Port to run the server on (default: 30007)
 
 ---
 

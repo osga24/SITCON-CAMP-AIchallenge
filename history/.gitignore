@@ -1,8 +1,7 @@
 .env
 prompta.txt
 node_modules
-**/__pycache__/
-.venv/
+__pycache__
 ctf.log
 panel/*.db
 
@@ -22,7 +21,7 @@ panel/*.db
 /coverage
 
 # next.js
-**/.next/
+/.next/
 /out/
 
 # production

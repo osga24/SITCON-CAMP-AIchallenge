@@ -32,9 +32,18 @@ openai.api_base = "https://api.juheai.top/v1"
 
 # argparse for schema and promptfile
 parser = argparse.ArgumentParser()
-parser.add_argument('--schema', type=str, default='chall1', help='MongoDB collection name (schema)')
-parser.add_argument('--promptfile', type=str, default='prompts/basic_prompt_1.txt', help='Prompt file location')
-parser.add_argument('--port', type=int, default=30009, help='Port to run the server on')
+parser.add_argument(
+    "--schema", type=str, default="chall1", help="MongoDB collection name (schema)"
+)
+parser.add_argument(
+    "--promptfile",
+    type=str,
+    default="prompts/basic_prompt_1.txt",
+    help="Prompt file location",
+)
+parser.add_argument(
+    "--port", type=int, default=30007, help="Port to run the server on"
+)
 args, unknown = parser.parse_known_args()
 
 SCHEMA_NAME = args.schema
@@ -45,7 +54,7 @@ PORT = args.port
 try:
     mongo_client = MongoClient(mongodb_url, tlsAllowInvalidCertificates=True)
     db = mongo_client.sitcon_camp
-    chall3_collection = db[SCHEMA_NAME]
+    chall_collection = db[SCHEMA_NAME]
     print(f"MongoDB 連接成功，使用 collection: {SCHEMA_NAME}")
 except Exception as e:
     print(f"MongoDB 連接失敗: {e}")
@@ -83,10 +92,10 @@ def save_to_mongodb(team_id: str, user_input: str, ai_response: str):
             "timestamp": datetime.utcnow(),
             "user_input": user_input,
             "ai_response": ai_response,
-            "challenge": "chall3",
+            "challenge": SCHEMA_NAME,
         }
 
-        result = chall3_collection.insert_one(document)
+        result = chall_collection.insert_one(document)
         print(f"MongoDB 寫入成功，ID: {result.inserted_id}")
         print(f"User Input: {user_input}, AI Response: {ai_response}")
 
@@ -163,12 +172,12 @@ async def debug_state():
     """調試用：查看當前狀態"""
     try:
         # 查詢 MongoDB 中的記錄數量
-        total_records = chall3_collection.count_documents({})
+        total_records = chall_collection.count_documents({})
         team_stats = []
 
         # 獲取每個隊伍的統計
         for team_id in range(1, 11):
-            count = chall3_collection.count_documents({"team_id": team_id})
+            count = chall_collection.count_documents({"team_id": team_id})
             if count > 0:
                 team_stats.append({"team_id": team_id, "message_count": count})
 

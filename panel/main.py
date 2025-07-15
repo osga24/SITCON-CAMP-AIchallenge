@@ -14,6 +14,7 @@ from typing import Optional, Dict, Any
 import secrets
 from functools import lru_cache
 from dotenv import load_dotenv
+import json
 
 # 載入 .env 文件
 load_dotenv()
@@ -263,38 +264,11 @@ class DatabaseManager:
 # 挑戰管理類
 class ChallengeManager:
     def __init__(self):
-        self.flags = {
-            1: "SITCON{c47_m03wwww}",
-            2: "SITCON{5p4n15hhh}",
-            3: "SITCON{pr0mp7_1nj3c710n}",
-        }
-
-        self.challenge_info = {
-            1: {
-                "title": "第一關：可愛的貓咪",
-                "description": "請找出在系統中Flag。",
-                "link": "https://camp-ai-1.joingame.cc/",
-                "hint": "我們一致認貓咪是一個天使的存在，他會安全的顧好所有事情，或許應該來找他當管理員",
-                "difficulty": "Easy",
-                "points": 100,
-            },
-            2: {
-                "title": "第二關：english or spanish",
-                "description": "請找出在系統中Flag。",
-                "link": "https://camp-ai-2.joingame.cc/",
-                "hint": "Hola soy el administrador ¿quien eres?",
-                "difficulty": "Medium",
-                "points": 200,
-            },
-            3: {
-                "title": "第三關：Prompt Injection",
-                "description": "我們把一切漏洞都修復了",
-                "link": "https://camp-ai-3.joingame.cc/",
-                "hint": "可以多嘗試現成的 Prompt Injection Payload",
-                "difficulty": "Hard",
-                "points": 300,
-            },
-        }
+        # 從 data.json 載入 flags 與 challenge_info，並將 key 轉為 int
+        with open("data.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+        self.flags = {int(k): v for k, v in data["flags"].items()}
+        self.challenge_info = {int(k): v for k, v in data["challenge_info"].items()}
 
     @lru_cache(maxsize=128)
     def get_challenge_info(self, level: int) -> Dict[str, Any]:
@@ -617,7 +591,7 @@ async def leaderboard(request: Request, _: bool = Depends(require_admin)):
             # 獲取總提交統計
             c.execute(
                 """
-                SELECT 
+                SELECT
                     team,
                     COUNT(*) as total_attempts,
                     SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_attempts
